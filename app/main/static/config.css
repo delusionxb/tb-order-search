@@ -1,0 +1,94 @@
+
+/*
+elements status
+*/
+.is-on {
+    display: block;
+}
+
+.is-on-inline {
+    display: inline;
+}
+
+.is-off {
+    display: none;
+}
+
+.is-selected {
+    background-color: lightslategray;
+}
+
+.config-cog {
+    position: fixed;
+    top: 2rem;
+    left: 2rem;
+    cursor: pointer;
+}
+
+.config-options-container {
+    position: fixed;
+    top: 0;
+    left: -12rem;
+    width: 12rem;
+    height: 100vh;
+    background-color: lightskyblue;
+}
+
+.config-options-wrapper {
+    position: absolute;
+    background-color: lightskyblue;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.config-close {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.config-close-icon {
+    padding: 0.5rem;
+    cursor: pointer;
+}
+
+.config-options {
+    padding: 1rem;
+    flex: 5;
+}
+
+.config-options>div {
+    padding: 0.5rem;
+    font-family: monospace;
+    font-weight: 900;
+    font-size: 1.2rem;
+    margin-top: 0.5rem;
+}
+
+div.config-options-name {
+    margin-bottom: 0.5rem;
+    font-size: 2rem;
+}
+
+.config-options>div[class^="config-options"]>div:nth-child(2) {
+    text-align: right;
+    margin-top: 0.5rem;
+}
+
+.createDaySort-options>span {
+    display: inline-block;
+    cursor: pointer;
+}
+
+.ordersPerPage-options>span {
+    font-family: monospace;
+    font-weight: 900;
+    font-size: 1.8rem;
+    cursor: pointer;
+}
+
+.config-options-confirm {
+    text-align: center;
+    flex: 2;
+}

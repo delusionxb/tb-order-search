@@ -1,0 +1,106 @@
+
+.main-search-wrapper {
+    /*position: fixed;*/
+    width: 80vw;
+    margin: 1rem auto;
+    background-color: lightskyblue;
+    padding: 0.75rem;
+    border-radius: 0.5rem;
+}
+
+.base-search {
+    display: flex;
+    padding: 1rem;
+}
+
+.base-search-form {
+    flex: 2.5;
+}
+
+.base-search-form>.button {
+    width: 5rem;
+    margin-left: 0.5rem;
+}
+
+.base-search-form>.input {
+    width: 70%;
+    max-width: 70%;
+}
+
+.base-search-extension {
+    flex: 1;
+    font-size: 0.85rem;
+    padding-top: 0.5rem;
+    cursor: pointer;
+}
+
+.base-search-all {
+    flex: 1;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.condition-search-container {
+    display: none;
+}
+
+.condition-search-wrapper {
+    display: flex;
+}
+
+.condition-search-rows {
+    flex: 5;
+}
+
+.condition-search-row {
+    padding: 0.75rem;
+    display: flex;
+}
+
+.condition-search.shopName {
+    flex: 2;
+}
+
+.condition-search.shopName>.input {
+    width: 50%;
+    max-width: 50%;
+}
+
+.condition-search.span {
+    padding: 0.5rem;
+    display: inline-block;
+}
+
+.condition-search.totalCost {
+    flex: 2;
+}
+
+.condition-search.totalCost>.input {
+    width: 30%;
+    max-width: 30%;
+}
+
+.condition-search-extension {
+    flex: 1;
+    text-align: right;
+    font-size: 2rem;
+}
+
+.condition-search.createDay {
+    flex: 1.2;
+    display: flex;
+}
+
+div.createDay-type {
+    margin-left: 0.3rem;
+    margin-right: 0.5rem;
+}
+
+.createDay-type-byRange {
+    flex: 2;
+}
+
+.createDay-type-byRange>.input {
+    width: 40%;
+    max-width: 40%;
+}

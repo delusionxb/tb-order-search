@@ -1,0 +1,30 @@
+.top-bottom-wrapper>.top-bottom {
+    /* horizontal center */
+    text-align: center;
+    cursor: pointer;
+}
+
+.top-bottom-wrapper>.top-bottom i {
+    /* vertical center, same value as the value of height of parent */
+    line-height: 3.5rem;
+}
+
+.top-bottom.to-top {
+    position: fixed;
+    top: 5rem;
+    right: 1rem;
+    width: 3.5rem;
+    height: 3.5rem;
+    background-color: lightskyblue;
+    border-radius: 50%;
+}
+
+.top-bottom.to-bottom {
+    position: fixed;
+    bottom: 5rem;
+    right: 1rem;
+    width: 3.5rem;
+    height: 3.5rem;
+    background-color: lightskyblue;
+    border-radius: 50%;
+}

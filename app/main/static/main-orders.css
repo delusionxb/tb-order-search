@@ -1,0 +1,146 @@
+
+.main-order {
+    width: 70vw;
+    margin: 0.5rem auto;
+    background-color: lightblue;
+    /*border-radius: 0.5rem;*/
+    /*padding: 0.5rem;*/
+    border-top-left-radius: 0.5rem;
+    border-top-right-radius: 0.5rem;
+}
+
+.order-topic {
+    display: flex;
+    padding: 0.75rem;
+    background-color: lightblue;
+    border-top-left-radius: 0.5rem;
+    border-top-right-radius: 0.5rem;
+}
+
+.order-topic-left {
+    display: flex;
+    flex: 5;
+    font-size: 0.9rem;
+}
+
+.order-topic-left>span {
+    margin-right: 1rem;
+}
+
+.order-topic-hidden {
+    /*flex: 1;*/
+}
+
+.order-topic-hidden>span {
+    cursor: pointer;
+}
+
+.order-topic-right {
+    display: flex;
+    flex: 1.2;
+    justify-content: flex-end;
+}
+
+.order-topic-right>span {
+    margin-left: 1rem;
+}
+
+.sub-orders {
+    display: flex;
+    /*flex-direction: column;*/
+    background-color: whitesmoke;
+    border: lightblue 1px solid;
+    border-top: 0;
+}
+
+.sub-orders-list {
+    flex: 4;
+    border-right: lightblue 1px solid;
+}
+
+.sub-orders-total {
+    flex: 1;
+    border-top: lightblue 1px solid;
+}
+
+.total-price {
+    margin: 1rem;
+}
+
+.sub-order {
+    /*margin-top: 1rem;*/
+    display: flex;
+    padding: 0.75rem;
+    /*background-color: whitesmoke;*/
+    border-top: lightblue 1px solid;
+}
+
+.sub-order-left {
+    flex: 1;
+}
+
+.img-content>img {
+    /*max-width: 12rem;*/
+    max-height: 12rem;
+    cursor: zoom-in;
+}
+
+.img-modal {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 100;
+}
+
+.img-modal-background {
+    width: 100%;
+    height: 100%;
+    background-color: black;
+    opacity: 0.7;
+    position: absolute;
+    cursor: zoom-out;
+}
+
+.img-modal-content {
+    z-index: 100;
+    padding: 0.5rem;
+    background-color: lightblue;
+    border-radius: 0.5rem;
+}
+
+.img-modal-content>img {
+    max-width: 40rem;
+    max-height: 40rem;
+    display: block;
+    /*
+    https://stackoverflow.com/questions/3407292/how-come-there-is-4px-of-extra-padding-appearing-under-my-a-element
+    where will be extra 4px under <img>
+    */
+    /*vertical-align: bottom;*/
+}
+
+.sub-order-right {
+    display: flex;
+    flex-direction: column;
+    flex: 5;
+    margin-left: 3rem;
+}
+
+.item-name {
+    padding: 1rem;
+}
+
+.item-cost {
+    padding: 1rem;
+}
+
+.item-cost span {
+    margin-left: 1rem
+}

@@ -18,6 +18,9 @@
 # case insensitive search
 # https://stackoverflow.com/questions/1863399/mongodb-is-it-possible-to-make-a-case-insensitive-query
 # https://stackoverflow.com/questions/8246019/case-insensitive-search-in-mongo
+#
+# isdigit(), isnumeric()
+# https://www.cnblogs.com/willowj/p/8045203.html
 
 import json, pymongo
 from app.main import get_mongodb
@@ -63,59 +66,63 @@ class Order:
 
     # fill in itemNames fields
     if itemName:
-      itemName_t = hanZ_converter.convert(itemName)
-      if itemName == itemName_t:  # if simplified == traditional OR just english characters, numbers and other symbols
-        search_conditions['itemNames'] = {'$regex': '{}'.format(itemName), '$options': '$i'}
-      else:  # if simplified != traditional
+      if itemName.isdigit():  # if order ID
+        search_conditions['id'] = itemName
+      else:  # if not order ID
+        itemName_t = hanZ_converter.convert(itemName)
+        if itemName == itemName_t:  # if simplified == traditional OR just english characters, numbers and other symbols
+          search_conditions['itemNames'] = {'$regex': '{}'.format(itemName), '$options': '$i'}
+        else:  # if simplified != traditional
+          search_conditions['$or'] = [
+            {'itemNames': {'$regex': '{}'.format(itemName)}},
+            {'itemNames': {'$regex': '{}'.format(itemName_t)}}
+          ]
+
+          # the code below will raise an error
+          # pymongo.errors.OperationFailure: cannot nest $ under $in
+          # searchConditions['itemNames'] = {'$in': [
+          #   {'$regex': '{}'.format(itemName)},
+          #   {'$regex': '{}'.format(itemName_t)}
+          # ]}
+
+    if not itemName.isdigit():
+      # fill in totalCost field
+      totalCost = {}
+      if minTotalCost:
+        totalCost['$gte'] = float(minTotalCost)
+
+      if maxTotalCost:
+        totalCost['$lte'] = float(maxTotalCost)
+
+      if totalCost:
+        search_conditions['totalCost'] = totalCost
+
+      # fill in shopName field
+      if shopName:
+        search_conditions['seller.shop'] = {'$regex': '{}'.format(shopName), '$options': '$i'}
+
+      # fill in createDay field
+      createDay = {}
+      if minCreateDay:
+        createDay['$gte'] = minCreateDay
+
+      if maxCreateDay:
+        createDay['$lte'] = maxCreateDay
+
+      if createDay:
+        search_conditions['createDay'] = createDay
+
+      if orderType:
+        search_conditions['orderType'] = orderType
+
+      # CREATE_CLOSED_OF_TAOBAO, TRADE_CLOSED, TRADE_FINISHED
+      if tradeStatus == 'closed':
         search_conditions['$or'] = [
-          {'itemNames': {'$regex': '{}'.format(itemName)}},
-          {'itemNames': {'$regex': '{}'.format(itemName_t)}}
+          {'tradeStatus1': 'CREATE_CLOSED_OF_TAOBAO'},
+          {'tradeStatus1': 'TRADE_CLOSED'},
         ]
-
-        # the code below will raise an error
-        # pymongo.errors.OperationFailure: cannot nest $ under $in
-        # searchConditions['itemNames'] = {'$in': [
-        #   {'$regex': '{}'.format(itemName)},
-        #   {'$regex': '{}'.format(itemName_t)}
-        # ]}
-
-    # fill in totalCost field
-    totalCost = {}
-    if minTotalCost:
-      totalCost['$gte'] = float(minTotalCost)
-
-    if maxTotalCost:
-      totalCost['$lte'] = float(maxTotalCost)
-
-    if totalCost:
-      search_conditions['totalCost'] = totalCost
-
-    # fill in shopName field
-    if shopName:
-      search_conditions['seller.shop'] = {'$regex': '{}'.format(shopName), '$options': '$i'}
-
-    # fill in createDay field
-    createDay = {}
-    if minCreateDay:
-      createDay['$gte'] = minCreateDay
-
-    if maxCreateDay:
-      createDay['$lte'] = maxCreateDay
-
-    if createDay:
-      search_conditions['createDay'] = createDay
-
-    if orderType:
-      search_conditions['orderType'] = orderType
-
-    # CREATE_CLOSED_OF_TAOBAO, TRADE_CLOSED, TRADE_FINISHED
-    if tradeStatus == 'closed':
-      search_conditions['$or'] = [
-        {'tradeStatus1': 'CREATE_CLOSED_OF_TAOBAO'},
-        {'tradeStatus1': 'TRADE_CLOSED'},
-      ]
-    elif tradeStatus == 'finished':
-      search_conditions['tradeStatus1'] = 'TRADE_FINISHED'
+      elif tradeStatus == 'finished':
+        search_conditions['tradeStatus1'] = 'TRADE_FINISHED'
 
     return search_conditions
 
@@ -171,6 +178,46 @@ def test():
     print(Order.totalCount)
     print(Order.get_mainOrders_by_page(indent=2))
 
+
+  def test_populate_search_conditions():
+    print(Order.populate_search_conditions(
+      dict(
+        itemName = '199964528608044074'
+      )
+    ))
+
+    print(Order.populate_search_conditions(
+      dict(
+        itemName='199964528608044074',
+        minTotalCost=100,
+        maxTotalCost=200,
+        shopName='漫画馆',
+        minCreateDay='2009-04-01',
+        maxCreateDay='2009-05-01',
+      )
+    ))
+
+    print(Order.populate_search_conditions(
+      dict(
+        itemName='blame',
+        minTotalCost=100,
+        maxTotalCost=200,
+        shopName='漫画馆',
+        minCreateDay='2009-04-01',
+        maxCreateDay='2009-05-01',
+      )
+    ))
+
+    print(Order.populate_search_conditions(
+      dict(
+        minTotalCost=100,
+        maxTotalCost=200,
+        minCreateDay='2009-04-01',
+        maxCreateDay='2009-05-01',
+      )
+    ))
+
+
   def test_get_totalCount_by_conditions():
     conditions1 = dict(
       minTotalCost=100,
@@ -222,7 +269,8 @@ def test():
 
 
   # test_get_mainOrders_by_page()
-  test_get_totalCount_by_conditions()
+  test_populate_search_conditions()
+  # test_get_totalCount_by_conditions()
 
 
 if __name__ == '__main__':

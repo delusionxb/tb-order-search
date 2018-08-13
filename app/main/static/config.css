@@ -1,31 +1,3 @@
-
-/*
-global styles
-*/
-.is-on {
-    display: block;
-}
-
-.is-on-inline {
-    display: inline;
-}
-
-.is-on-flex {
-    display: flex;
-}
-
-.is-off {
-    display: none !important;
-}
-
-.is-selected {
-    background-color: lightslategray;
-}
-
-.shrink {
-    padding: 0 !important;
-}
-
 .config-cog {
     position: fixed;
     top: 2rem;

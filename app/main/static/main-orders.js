@@ -11,6 +11,9 @@
 *   gsed -i 's/"""/"/' ${json}
 * done
 *
+* if a string is numeric
+* https://stackoverflow.com/questions/175739/is-there-a-built-in-way-in-javascript-to-check-if-a-string-is-a-valid-number
+*
 * */
 
 
@@ -153,15 +156,17 @@ let makeSubOrders = function(mainOrderData, createDay, mainOrderId, payInfo, ord
         // subOrderId will auto-changed to suborderid
         // https://www.designcise.com/web/tutorial/how-to-check-if-a-string-contains-another-substring-in-javascript
         let subOrderPrefix = `<div class="sub-order" data-suborderid="${subOrderId}">`;
-        if (funcArgs.itemName !== undefined) {
-            if (itemTitle.search(new RegExp(funcArgs.itemName, 'i')) === -1) {
-                subOrderPrefix = `<div class="sub-order is-off" data-suborderid="${subOrderId}">`;
+        if (isNaN(funcArgs.itemName)) { // if not order ID
+            if (funcArgs.itemName !== undefined) {
+                if (itemTitle.search(new RegExp(funcArgs.itemName, 'i')) === -1) {
+                    subOrderPrefix = `<div class="sub-order is-off" data-suborderid="${subOrderId}">`;
+                }
             }
-        }
 
-        if (funcArgs.itemName_t !== funcArgs.itemName) {
-            if (itemTitle.search(new RegExp(funcArgs.itemName_t, 'i')) !== -1) {
-                subOrderPrefix = `<div class="sub-order" data-suborderid="${subOrderId}">`;
+            if (funcArgs.itemName_t !== funcArgs.itemName) {
+                if (itemTitle.search(new RegExp(funcArgs.itemName_t, 'i')) !== -1) {
+                    subOrderPrefix = `<div class="sub-order" data-suborderid="${subOrderId}">`;
+                }
             }
         }
 

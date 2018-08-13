@@ -5,7 +5,7 @@ let populateMainSearchContainer = function() {
         <div class="main-search-wrapper">
             <div class="base-search">
                 <div class="base-search-form">
-                    <input class="input is-info">
+                    <input class="input is-info" placeholder="put in item name or order ID to search">
                     <button class="button btn-search is-info">搜索</button>
                     <button class="button btn-reset is-info">重置</button>
                 </div>
@@ -19,6 +19,7 @@ let populateMainSearchContainer = function() {
                     </span>
                 </div>
                 <div class="base-search-all">
+                    <span class="return-count">找到 <span></span> 笔订单</span>
                     <button class="button btn-all is-info">所有订单</button>
                 </div>
             </div>
@@ -179,13 +180,18 @@ let resetSearchData = function() {
 };
 
 let bindSearchFormBtns = function() {
-    $('.base-search-form>.input').keypress(function() {
+    let itemNameInput = $('.base-search-form>.input');
+    itemNameInput.keypress(function() {
         log('main-search.bindSearchFormBtns() by Enter');
         if (event.code === 'Enter') {
             event.target.blur(); // make target lose focus
             event.preventDefault(); // prevent default event
             makePagination4Search(getSearchData());
         }
+    });
+
+    itemNameInput.focus(function() {
+        itemNameInput.select();
     });
 
     $('.base-search-form>.button.btn-search').click(function(event) {

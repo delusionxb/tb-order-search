@@ -40,6 +40,13 @@
     justify-content: flex-end;
 }
 
+.return-count {
+    margin-right: 1rem;
+    line-height: 2.5rem;
+    font-weight: 500;
+    font-size: 0.9rem;
+}
+
 .condition-search-container {
     display: none;
 }

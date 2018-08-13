@@ -150,6 +150,7 @@ let makePagination = function() {
         method: 'GET',
         success: function(response) {
             log(`${response} results returned in total from makePagination()`);
+            $('.return-count>span').text(response);
             pageCount = Math.ceil(response / ordersPerPage);
             paginationRightBorder = pageCount - pageGroupCount + 1;
 
@@ -170,6 +171,7 @@ let makePagination4Search = function(searchData) {
         contentType: 'application/json; charset=UTF-8',
         success: function(response) {
             log(`${response} results returned in total from makePagination4Search()`);
+            $('.return-count>span').text(response);
             pageCount = Math.ceil(response / ordersPerPage);
             paginationRightBorder = pageCount - pageGroupCount + 1;
 

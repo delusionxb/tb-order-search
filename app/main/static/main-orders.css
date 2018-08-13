@@ -68,10 +68,8 @@
 }
 
 .sub-order {
-    /*margin-top: 1rem;*/
     display: flex;
     padding: 0.75rem;
-    /*background-color: whitesmoke;*/
     border-top: lightblue 1px solid;
 }
 

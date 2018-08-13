@@ -10,8 +10,12 @@ global styles
     display: inline;
 }
 
+.is-on-flex {
+    display: flex;
+}
+
 .is-off {
-    display: none;
+    display: none !important;
 }
 
 .is-selected {

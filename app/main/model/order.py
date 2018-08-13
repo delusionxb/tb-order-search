@@ -14,6 +14,10 @@
 #     {'$and':[{'example.c':{'$gt':3}},{'example.d':{'$gt':4}}]}
 #   ]
 # })
+#
+# case insensitive search
+# https://stackoverflow.com/questions/1863399/mongodb-is-it-possible-to-make-a-case-insensitive-query
+# https://stackoverflow.com/questions/8246019/case-insensitive-search-in-mongo
 
 import json, pymongo
 from app.main import get_mongodb
@@ -60,9 +64,9 @@ class Order:
     # fill in itemNames fields
     if itemName:
       itemName_t = hanZ_converter.convert(itemName)
-      if itemName == itemName_t:
+      if itemName == itemName_t:  # if simplified == traditional OR just english characters, numbers and other symbols
         search_conditions['itemNames'] = {'$regex': '{}'.format(itemName), '$options': '$i'}
-      else:
+      else:  # if simplified != traditional
         search_conditions['$or'] = [
           {'itemNames': {'$regex': '{}'.format(itemName)}},
           {'itemNames': {'$regex': '{}'.format(itemName_t)}}

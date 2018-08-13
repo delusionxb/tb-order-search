@@ -34,9 +34,8 @@ let makeMainOrdersList = function(orderData, funcArgs={}) {
         let mainOrderId = mainOrderData.id;
         let orderStatus = mainOrderData.statusInfo.text;
 
-        let results = makeSubOrders(mainOrderData, createDay, mainOrderId, mainOrderData.payInfo, orderStatus, funcArgs);
-        let subOrders = results[0];
-        funcArgs.hasHiddenSubOrder = results[1];
+        let subOrders = makeSubOrders(mainOrderData, createDay, mainOrderId, mainOrderData.payInfo, orderStatus, funcArgs);
+        funcArgs.hasHiddenSubOrder = subOrders.get(0).outerHTML.search(new RegExp('div class="sub-order is-off"')) !== -1;
         let orderTopic = makeOrderTopic(mainOrderData, createDay, mainOrderId, mainOrderData.seller, funcArgs);
 
         // mainOrderId will be auto-changed to mainorderid
@@ -117,7 +116,6 @@ let makeSubOrders = function(mainOrderData, createDay, mainOrderId, payInfo, ord
     }
     subOrdersTotal.append(payInfoObject);
 
-    let hasHiddenSubOrder = false;
     $.each(mainOrderData.subOrders, function(index, subOrderData) {
         let subOrderId = subOrderData.id;
         let itemInfo = subOrderData.itemInfo;
@@ -154,18 +152,16 @@ let makeSubOrders = function(mainOrderData, createDay, mainOrderId, payInfo, ord
 
         // subOrderId will auto-changed to suborderid
         // https://www.designcise.com/web/tutorial/how-to-check-if-a-string-contains-another-substring-in-javascript
-        let subOrderPrefix = '<div class="sub-order" data-suborderid="${subOrderId}">';
+        let subOrderPrefix = `<div class="sub-order" data-suborderid="${subOrderId}">`;
         if (funcArgs.itemName !== undefined) {
             if (itemTitle.search(new RegExp(funcArgs.itemName, 'i')) === -1) {
-                hasHiddenSubOrder = true;
-                subOrderPrefix = '<div class="sub-order is-off" data-suborderid="${subOrderId}">';
+                subOrderPrefix = `<div class="sub-order is-off" data-suborderid="${subOrderId}">`;
             }
         }
 
-        if (funcArgs.itemName_t !== undefined && hasHiddenSubOrder) {
+        if (funcArgs.itemName_t !== funcArgs.itemName) {
             if (itemTitle.search(new RegExp(funcArgs.itemName_t, 'i')) !== -1) {
-                hasHiddenSubOrder = false;
-                subOrderPrefix = '<div class="sub-order" data-suborderid="${subOrderId}">';
+                subOrderPrefix = `<div class="sub-order" data-suborderid="${subOrderId}">`;
             }
         }
 
@@ -207,7 +203,7 @@ let makeSubOrders = function(mainOrderData, createDay, mainOrderId, payInfo, ord
         </div>`;
         subOrdersList.append($(subOrder));
     });
-    return [subOrders, hasHiddenSubOrder];
+    return subOrders
 };
 
 let toggleImgModel = function() {

@@ -28,6 +28,7 @@ class Order:
 
   @staticmethod
   def get_mainOrders_by_page(pageNo=1, ordersPerPage=10, createDaySort=-1, indent=None):
+    print('pageNo {}, ordersPerPage {}, createDaySort {}'.format(pageNo, ordersPerPage, createDaySort))
     # the command below works in mongodb shell, but not in pymongo
     # db.mainOrders.find({}, {'_id':0}).sort({'orderInfo.createDay': -1}).skip((pageNo - 1) * ordersPerPage).limit(ordersPerPage)
     #
@@ -44,15 +45,35 @@ class Order:
 
   @staticmethod
   def populate_search_conditions(search_data):
+    itemName = search_data.get('itemName', '')
     minTotalCost = search_data.get('minTotalCost', 0)
     maxTotalCost = search_data.get('maxTotalCost', 0)
     shopName = search_data.get('shopName', '')
     minCreateDay = search_data.get('minCreateDay', '')
     maxCreateDay = search_data.get('maxCreateDay', '')
-    itemName = search_data.get('itemName', '')
+    orderType = search_data.get('orderType', '')
+    tradeStatus = search_data.get('tradeStatus', '')
 
     # print('search_data: {}'.format(search_data))
     search_conditions = {}
+
+    # fill in itemNames fields
+    if itemName:
+      itemName_t = hanZ_converter.convert(itemName)
+      if itemName == itemName_t:
+        search_conditions['itemNames'] = {'$regex': '{}'.format(itemName), '$options': '$i'}
+      else:
+        search_conditions['$or'] = [
+          {'itemNames': {'$regex': '{}'.format(itemName)}},
+          {'itemNames': {'$regex': '{}'.format(itemName_t)}}
+        ]
+
+        # the code below will raise an error
+        # pymongo.errors.OperationFailure: cannot nest $ under $in
+        # searchConditions['itemNames'] = {'$in': [
+        #   {'$regex': '{}'.format(itemName)},
+        #   {'$regex': '{}'.format(itemName_t)}
+        # ]}
 
     # fill in totalCost field
     totalCost = {}
@@ -80,23 +101,17 @@ class Order:
     if createDay:
       search_conditions['createDay'] = createDay
 
-    # fill in itemNames fields
-    if itemName:
-      itemName_t = hanZ_converter.convert(itemName)
-      if itemName == itemName_t:
-        search_conditions['itemNames'] = {'$regex': '{}'.format(itemName), '$options': '$i'}
-      else:
-        search_conditions['$or'] = [
-          {'itemNames': {'$regex': '{}'.format(itemName)}},
-          {'itemNames': {'$regex': '{}'.format(itemName_t)}}
-        ]
+    if orderType:
+      search_conditions['orderType'] = orderType
 
-        # the code below will raise an error
-        # pymongo.errors.OperationFailure: cannot nest $ under $in
-        # searchConditions['itemNames'] = {'$in': [
-        #   {'$regex': '{}'.format(itemName)},
-        #   {'$regex': '{}'.format(itemName_t)}
-        # ]}
+    # CREATE_CLOSED_OF_TAOBAO, TRADE_CLOSED, TRADE_FINISHED
+    if tradeStatus == 'closed':
+      search_conditions['$or'] = [
+        {'tradeStatus1': 'CREATE_CLOSED_OF_TAOBAO'},
+        {'tradeStatus1': 'TRADE_CLOSED'},
+      ]
+    elif tradeStatus == 'finished':
+      search_conditions['tradeStatus1'] = 'TRADE_FINISHED'
 
     return search_conditions
 
@@ -177,11 +192,23 @@ def test():
       maxCreateDay='2017-03-31',
       itemName='漫画',
     )
+    conditions4 = dict(
+      minCreateDay = '2009-01-01',
+      maxCreateDay = '2009-12-31',
+      tradeStatus = 'finished',
+    )
+    conditions5 = dict(
+      minCreateDay = '2009-01-01',
+      maxCreateDay = '2009-12-31',
+      tradeStatus = 'closed',
+    )
 
     conditions_list = [
-      conditions1,
-      conditions2,
-      conditions3,
+      # conditions1,
+      # conditions2,
+      # conditions3,
+      conditions4,
+      conditions5,
     ]
 
     for conditions in conditions_list:

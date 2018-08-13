@@ -1,6 +1,6 @@
 
 /*
-elements status
+global styles
 */
 .is-on {
     display: block;
@@ -16,6 +16,10 @@ elements status
 
 .is-selected {
     background-color: lightslategray;
+}
+
+.shrink {
+    padding: 0 !important;
 }
 
 .config-cog {

@@ -4,7 +4,7 @@ let
     createDaySort = -1,
     pageCount = 0,
     pageGroupCount = 5,
-    paginationRightBroder = 0;
+    paginationRightBorder = 0;
 
 
 // populate <section class="config-container"></section> with configWrapperHtml
@@ -123,8 +123,7 @@ let toggleConfigPanel = function() {
                 let configs = saveConfig();
                 ordersPerPage = configs.ordersPerPage;
                 createDaySort = configs.createDaySort;
-                // makePagination();
-                // makePagination4Search(getSearchData());
+                makePagination4Search(getSearchData());
             },
         });
     });

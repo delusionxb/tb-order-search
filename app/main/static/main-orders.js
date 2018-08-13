@@ -1,8 +1,34 @@
 
+/*
+* '"id": 186976731715044074' needs to convert to '"id": "186976731715044074"'
+* because 186976731715044074 is beyond max value of float type
+*
+* try 186976731715044074 + '' in console, will have "186976731715044060"
+*
+* to wrap id string with double quotes:
+* for json in `ls *json`; do
+*   gsed -i 's/"id":\ \([0-9]*\)/"id":\ "\1"/' ${json}
+*   gsed -i 's/"""/"/' ${json}
+* done
+*
+* */
+
+
+let mainOrderContainer;
+let four04Images;
 let makeMainOrdersList = function(orderData, funcArgs={}) {
     log(`main-orders.makeMainOrdersList() with orderData.length: ${orderData.length}`);
     let mainOrdersList = $('<div class="main-orders-list"></div>');
-    mainOrdersList.empty();
+
+    if (orderData.length === 0) {
+        let noResults = `
+            <div class="no-results">
+                <span>No result found, please try other search conditions.</span>
+            </div>
+        `;
+        mainOrdersList.append($(noResults));
+    }
+
     $.each(orderData, function(index, mainOrderData) {
         let createDay = mainOrderData.orderInfo.createDay;
         let mainOrderId = mainOrderData.id;
@@ -99,28 +125,32 @@ let makeSubOrders = function(mainOrderData, createDay, mainOrderId, payInfo, ord
         let itemTitle = itemInfo.title;
 
         let subOrderImg = '';
+        let ifNoImg = false;
         let itemPic = itemInfo.pic;
-        let imgSrc = `${createDay.split('-')[0]}/${createDay}`;
-        if (itemPic !== '') { // if not '增值服务' or '保险服务'
-            itemPic = itemPic.substr(0, itemPic.indexOf('_80x80')); // remove thumbnail
-            let itemPicExt = itemPic.substr(itemPic.lastIndexOf('\.'), itemPic.length);
-
+        let itemNamePrefix = '<div class="item-name">';
+        let itemCostPrefix = '<div class="item-cost">';
+        if ((itemPic === '' || itemPic.includes('nopic.gif')
+                            && subOrderData.priceInfo.realTotal === '0.00')) { // itemPic is '' when '增值服务' or '保险服务'
+            itemNamePrefix = '<div class="item-name shrink">';
+            itemCostPrefix = '<div class="item-cost shrink">';
+            ifNoImg = true;
+        } else {
+            let itemImgFile;
             if (mainOrderId === subOrderId) {
-                subOrderImg = `<img src="//localhost:4000/item-images/${imgSrc}_${mainOrderId}_${itemId}${itemPicExt}">`;
+                itemImgFile = `${createDay}_${mainOrderId}_${itemId}.jpg`;
             } else {
-                subOrderImg = `<img src="//localhost:4000/item-images/${imgSrc}_${mainOrderId}_${subOrderId}_${itemId}${itemPicExt}">`;
+                itemImgFile = `${createDay}_${mainOrderId}_${subOrderId}_${itemId}.jpg`;
+            }
+
+            if (four04Images.includes(itemImgFile+'.404')) {
+                subOrderImg = `<img src="../static/404-not-found.jpg">`;
+            } else {
+                subOrderImg = `<img src="//localhost:4000/item-images/${createDay.split('-')[0]}/${itemImgFile}">`;
             }
         }
 
         let unitPrice = subOrderData.priceInfo.realTotal;
         let quantity = subOrderData.quantity;
-
-        let itemNamePrefix = '<div class="item-name">';
-        let itemCostPrefix = '<div class="item-cost">';
-        if (itemPic === '') {
-            itemNamePrefix = '<div class="item-name shrink">';
-            itemCostPrefix = '<div class="item-cost shrink">';
-        }
 
         // subOrderId will auto-changed to suborderid
         // https://www.designcise.com/web/tutorial/how-to-check-if-a-string-contains-another-substring-in-javascript
@@ -139,21 +169,30 @@ let makeSubOrders = function(mainOrderData, createDay, mainOrderId, payInfo, ord
             }
         }
 
-        let subOrder = `
-        ${subOrderPrefix}
-            <div class="sub-order-left">
-                <div class="img-content">
-                    ${subOrderImg}
-                </div>
-                <div class="img-modal-container is-off">
-                    <div class="img-modal">
-                        <div class="img-modal-background"></div>
-                        <div class="img-modal-content">
-                            ${subOrderImg}
+        let subOrderLeft;
+        if (ifNoImg) {
+            subOrderLeft = `<div class="sub-order-left"></div>`;
+        } else {
+            subOrderLeft = `
+                <div class="sub-order-left">
+                    <div class="img-content">
+                        ${subOrderImg}
+                    </div>
+                    <div class="img-modal-container is-off">
+                        <div class="img-modal">
+                            <div class="img-modal-background"></div>
+                            <div class="img-modal-content">
+                                ${subOrderImg}
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
+            `;
+        }
+
+        let subOrder = `
+        ${subOrderPrefix}
+            ${subOrderLeft}
             <div class="sub-order-right">
                 ${itemNamePrefix}
                     <a href="${itemInfo.itemUrl}" target="_blank" rel="noreferrer">
@@ -210,8 +249,14 @@ let getMainOrdersByPage = function(pageNo) {
         url: `/order/byPage?pageNo=${pageNo}&ordersPerPage=${ordersPerPage}&createDaySort=${createDaySort}`,
         method: 'GET',
         success: function(response) {
-            let mainOrdersList = makeMainOrdersList(JSON.parse(response));
-            $('.main-orders-container').append(mainOrdersList);
+            if (mainOrderContainer === undefined) {
+                mainOrderContainer = $('.main-orders-container');
+            }
+            $('.main-orders-list').remove();
+            let responseObj = JSON.parse(response);
+            four04Images = responseObj['404_images'];
+            let mainOrdersList = makeMainOrdersList(responseObj.mainOrders);
+            mainOrderContainer.append(mainOrdersList);
             toggleImgModel();
         },
     });
@@ -236,8 +281,12 @@ let getMainOrdersByConditions = function(pageNo, searchData) {
                         itemName: itemName,
                         itemName_t: itemName_t,
                     };
-                    let mainOrdersList = makeMainOrdersList(JSON.parse(response), funcArgs);
-                    $('.main-orders-container').append(mainOrdersList);
+
+                    $('.main-orders-list').remove();
+                    let responseObj = JSON.parse(response);
+                    four04Images = responseObj['404_images'];
+                    let mainOrdersList = makeMainOrdersList(responseObj.mainOrders, funcArgs);
+                    mainOrderContainer.append(mainOrdersList);
                     toggleImgModel();
                     toggleHiddenSubOrders();
                 },

@@ -1,0 +1,13 @@
+.pagination-wrapper {
+    margin-top: 1rem;
+    display: flex;
+    padding: 1rem;
+}
+
+.pagination-left {
+    flex: 4;
+}
+
+.pagination-right {
+    flex: 3;
+}

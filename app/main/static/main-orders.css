@@ -144,3 +144,18 @@
 .item-cost span {
     margin-left: 1rem
 }
+
+.no-results {
+    margin: 0 auto;
+    width: 70%;
+    padding: 1.5rem;
+    background-color: lightskyblue;
+    border-radius: 0.5rem;
+}
+
+.no-results>span {
+    font-family: monospace;
+    font-size: 2rem;
+    font-weight: 500;
+    color: white;
+}

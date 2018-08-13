@@ -12,10 +12,10 @@ let populateMainSearchContainer = function() {
                 <div class="base-search-extension">
                     <span>更多搜索条件</span>
                     <span class="is-off">
-                        <i class="fas fa-angle-down"></i>
+                        <i class="fas fa-angle-up"></i>
                     </span>
                     <span>
-                        <i class="fas fa-angle-up"></i>
+                        <i class="fas fa-angle-down"></i>
                     </span>
                 </div>
                 <div class="base-search-all">
@@ -39,19 +39,21 @@ let populateMainSearchContainer = function() {
                                 <span class="condition-search span">订单类型</span>
                                 <div class="select is-info">
                                   <select>
-                                    <option>所有</option>
-                                    <option>实物</option>
-                                    <option>虚拟</option>
+                                    <option value="">所有</option>
+                                    <option value="real">实物</option>
+                                    <option value="virtual">虚拟</option>
                                   </select>
                                 </div>
                             </div>
-                            <div class="condition-search div orderStatus">
+                            <div class="condition-search div tradeStatus">
                                 <span class="condition-search span">订单状态</span>
                                 <div class="select is-info">
                                   <select>
-                                    <option>所有</option>
-                                    <option>完成</option>
-                                    <option>﻿关闭</option>
+                                    <option value="">所有</option>
+                                    <option value="finished">完成</option>
+                                    <!-- the 'closed' here actually means 'cancelled', not finished,
+                                     the order / trade was closed after it's been placed, but not payed yet -->
+                                    <option value="closed">关闭</option>
                                   </select>
                                 </div>
                             </div>
@@ -108,6 +110,8 @@ let populateSearchFields = function() {
     searchFields.minTotalCost = $('.condition-search.totalCost>.input.minTotalCost');
     searchFields.maxTotalCost = $('.condition-search.totalCost>.input.maxTotalCost');
     searchFields.shopName = $('.condition-search.shopName>.input');
+    searchFields.orderType = $('.condition-search.orderType select').find('option:selected');
+    searchFields.tradeStatus = $('.condition-search.tradeStatus select').find('option:selected');
 
     let byMonthSelect = $('.createDay-type-byMonth');
     let byRange = $('.createDay-type-byRange');
@@ -164,7 +168,7 @@ let resetSearchData = function() {
     }
 
     $('.condition-search.orderType select>option:nth-child(1)').prop('selected', 'selected');
-    $('.condition-search.orderStatus select>option:nth-child(1)').prop('selected', 'selected');
+    $('.condition-search.tradeStatus select>option:nth-child(1)').prop('selected', 'selected');
     $('select[class="createDay-type"]>option:nth-child(1)').prop('selected', 'selected');
     let byMonthDiv = $('div.createDay-type-byMonth');
     if (byMonthDiv.css('display') === 'none') {
@@ -175,7 +179,7 @@ let resetSearchData = function() {
 };
 
 let bindSearchFormBtns = function() {
-    $('.base-search>.input').keypress(function() {
+    $('.base-search-form>.input').keypress(function() {
         log('main-search.bindSearchFormBtns() by Enter');
         if (event.code === 'Enter') {
             event.target.blur(); // make target lose focus
@@ -210,13 +214,8 @@ let toggleDateRangeType = function() {
     });
 };
 
-let doSearch = function() {
-    toggleSearchExtension();
-    toggleDateRangeType();
-    bindSearchFormBtns();
-};
-
 
 populateMainSearchContainer();
 toggleSearchExtension();
 toggleDateRangeType();
+bindSearchFormBtns();

@@ -46,19 +46,44 @@ def insert_subOrders():
         shop = json_data.get('seller').get('shopName'),
       )
 
+    payInfo = json_data.get('payInfo')
+
     sub_orders = dict(
       id = json_data.get('id'),
+      # CREATE_CLOSED_OF_TAOBAO, TRADE_CLOSED, TRADE_FINISHED
       tradeStatus1 = json_data.get('extra').get('tradeStatus'),
       tradeStatus2 = json_data.get('statusInfo').get('text'),
       createDay = json_data.get('orderInfo').get('createDay'),
       actualFee = json_data.get('payInfo').get('actualFee'),
-      totalCost = float(json_data.get('﻿payInfo').get('﻿actualFee')),
+      totalCost = float(payInfo.get('actualFee')),
       seller = seller,
       itemNames = [subOrder.get('itemInfo').get('title') for subOrder in json_data.get('subOrders')],
+      orderType = 'virtual' if 'postType' in payInfo else 'real',
     )
     db.subOrders.insert(sub_orders)
     # print(sub_orders)
   pass
+
+
+def update_subOrders():
+  main_orders_path = '{}/python/spider/main-orders'.format(os.getenv('HOME'))
+  for json_file in glob.glob('{}/*/*json'.format(main_orders_path)):
+    print('update json data from file {}'.format(json_file))
+    json_data = json.load(open(json_file, 'r'))
+    payInfo = json_data.get('payInfo')
+    # print('payInfo: {}'.format(payInfo))
+    db.subOrders.update_many(
+      {'id': json_data.get('id')}, {
+        '$set': {'orderType': 'virtual' if 'postType' in payInfo else 'real'}
+      }
+    )
+
+  pass
+
+
+def test1():
+  json_data = json.load(open('/Users/frank/python/spider/main-orders/2009/2009-04-03_1654429193.json', 'r'))
+  print(json_data.get('payInfo'))
 
 
 def search():
@@ -107,7 +132,10 @@ def search():
 
 if __name__ == '__main__':
   initialize()
-  insert_mainOrders()
-  insert_subOrders()
+  # insert_mainOrders()
+  # insert_subOrders()
+  update_subOrders()
   # search()
+
+  # test1()
   pass

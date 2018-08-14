@@ -180,18 +180,21 @@ let resetSearchData = function() {
 };
 
 let bindSearchFormBtns = function() {
-    let itemNameInput = $('.base-search-form>.input');
-    itemNameInput.keypress(function() {
-        log('main-search.bindSearchFormBtns() by Enter');
+    let searchInputs = $('.base-search-form>.input, .condition-search>.input');
+    searchInputs.keypress(function() {
         if (event.code === 'Enter') {
+            log('main-search.bindSearchFormBtns() by Enter');
             event.target.blur(); // make target lose focus
             event.preventDefault(); // prevent default event
             makePagination4Search(getSearchData());
         }
     });
 
-    itemNameInput.focus(function() {
-        itemNameInput.select();
+    // DO NOT use searchInputs.focus(), it will result in dead loop
+    $.each(searchInputs, function(index, searchInput) {
+        searchInput.focus(function() {
+            searchInput.select();
+        });
     });
 
     $('.base-search-form>.button.btn-search').click(function(event) {

@@ -59,9 +59,10 @@ let makeOrderTopic = function(mainOrderData, createDay, mainOrderId, seller, fun
     $.each(orderOperations, function(i, operation) {
         if (operation.id === 'viewDetail' || operation.id === 'viewLogistic') {
             let opSpan = `
-            <span>
-                <a href="${operation.url}" target="_blank" rel="noopener noreferrer">${operation.text}</a>
-            </span>`;
+                <span>
+                    <a href="${operation.url}" target="_blank" rel="noopener noreferrer">${operation.text}</a>
+                </span>
+            `;
             orderTopicRight.append($(opSpan));
         }
     });
@@ -93,15 +94,7 @@ let makeOrderTopic = function(mainOrderData, createDay, mainOrderId, seller, fun
     `;
 };
 
-let makeSubOrders = function(mainOrderData, createDay, mainOrderId, payInfo, orderStatus, funcArgs={}) {
-    log(`main-orders.makeSubOrders() with [orderId: ${mainOrderId}, createDay: ${createDay}]`);
-    let subOrders = $('<div class="sub-orders"></div>');
-
-    let subOrdersList = $('<div class="sub-orders-list"></div>');
-    subOrders.append(subOrdersList);
-
-    let subOrdersTotal = $('<div class="sub-orders-total"></div>');
-    subOrders.append(subOrdersTotal);
+let makePayInfo = function(payInfo, orderStatus) {
     let payInfoObject;
     if ('postType' in payInfo) { // '虚拟物品'
         payInfoObject = $(`<div class="total-price">
@@ -110,14 +103,118 @@ let makeSubOrders = function(mainOrderData, createDay, mainOrderId, payInfo, ord
             <span>${orderStatus}</span>
         </div>`)
     } else if ('postFees' in payInfo) {
-        let postFees = mainOrderData.payInfo.postFees[0];
+        let postFees = payInfo.postFees[0];
         payInfoObject = $(`<div class="total-price">
             <span>总价: ${payInfo.actualFee}</span><br />
             <span>${postFees.prefix}${postFees.value}${postFees.suffix}</span><br />
             <span>${orderStatus}</span>
         </div>`)
     }
-    subOrdersTotal.append(payInfoObject);
+    return payInfoObject;
+};
+
+let makeSubOrderImg = function(mainOrderId, subOrderId, itemId, createDay, itemPic, realTotal) {
+    let subOrderImg = '';
+    // let itemPic = itemInfo.pic;
+    if ((itemPic === '' || itemPic.includes('nopic.gif') && realTotal === '0.00')) { // itemPic is '' when '增值服务' or '保险服务'
+        return null;
+    } else {
+        let itemImgFile;
+        if (mainOrderId === subOrderId) {
+            itemImgFile = `${createDay}_${mainOrderId}_${itemId}.jpg`;
+        } else {
+            itemImgFile = `${createDay}_${mainOrderId}_${subOrderId}_${itemId}.jpg`;
+        }
+
+        if (four04Images.includes(itemImgFile+'.404')) {
+            subOrderImg = `<img src="../static/404-not-found.jpg">`;
+        } else {
+            subOrderImg = `<img src="//localhost:4000/item-images/${createDay.split('-')[0]}/${itemImgFile}">`;
+        }
+        return subOrderImg;
+    }
+};
+
+let makeSubOrderLeft = function(subOrderImg) {
+    let subOrderLeft;
+    if (!subOrderImg) {
+        subOrderLeft = `<div class="sub-order-left"></div>`;
+    } else {
+        subOrderLeft = `
+            <div class="sub-order-left">
+                <div class="img-content">
+                    ${subOrderImg}
+                </div>
+                <div class="img-modal-container is-off">
+                    <div class="img-modal">
+                        <div class="img-modal-background"></div>
+                        <div class="img-modal-content">
+                            ${subOrderImg}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+    return subOrderLeft;
+};
+
+let makeSubOrderRight = function(subOrderImg, itemInfo, unitPrice, quantity) {
+    let itemExtraInfo = '';
+    if (itemInfo.skuText.length !== 0) {
+        $.each(itemInfo.skuText, function(index, skuText) {
+            itemExtraInfo += `<span>${skuText.name}: ${skuText.value}</span>`;
+        });
+    }
+
+    let itemExtraHtml = `
+        <div class="item-extra">
+            ${itemExtraInfo}
+        </div>
+    `;
+
+    let itemNamePrefix, itemCostPrefix;
+    if (subOrderImg) {
+        itemNamePrefix = '<div class="item-name">';
+        itemCostPrefix = '<div class="item-cost">';
+    } else {
+        itemNamePrefix = '<div class="item-name shrink">';
+        itemCostPrefix = '<div class="item-cost shrink">';
+    }
+
+    let itemNameHtml = `
+        ${itemNamePrefix}
+            <a href="${itemInfo.itemUrl}" target="_blank" rel="noreferrer">
+                <span>${itemInfo.title}</span>
+            </a>
+        </div>
+    `;
+
+    let itemCostHtml = `
+        ${itemCostPrefix}
+            <span>单价: ${unitPrice}</span>
+            <span>数量: ${quantity}</span>
+        </div>
+    `;
+
+    return `
+        <div class="sub-order-right">
+            ${itemNameHtml}
+            ${itemExtraHtml}
+            ${itemCostHtml}
+        </div>
+    `;
+};
+
+let makeSubOrders = function(mainOrderData, createDay, mainOrderId, payInfo, orderStatus, funcArgs={}) {
+    log(`main-orders.makeSubOrders() with [orderId: ${mainOrderId}, createDay: ${createDay}]`);
+    let subOrders = $('<div class="sub-orders"></div>');
+    let subOrdersList = $('<div class="sub-orders-list"></div>');
+    let subOrdersTotal = $('<div class="sub-orders-total"></div>');
+
+    subOrders.append(subOrdersList);
+    subOrders.append(subOrdersTotal);
+    subOrdersTotal.append(makePayInfo(payInfo, orderStatus));
 
     $.each(mainOrderData.subOrders, function(index, subOrderData) {
         let subOrderId = subOrderData.id;
@@ -125,90 +222,34 @@ let makeSubOrders = function(mainOrderData, createDay, mainOrderId, payInfo, ord
         let itemId = itemInfo.id;
         let itemTitle = itemInfo.title;
 
-        let subOrderImg = '';
-        let ifNoImg = false;
-        let itemPic = itemInfo.pic;
-        let itemNamePrefix = '<div class="item-name">';
-        let itemCostPrefix = '<div class="item-cost">';
-        if ((itemPic === '' || itemPic.includes('nopic.gif')
-                            && subOrderData.priceInfo.realTotal === '0.00')) { // itemPic is '' when '增值服务' or '保险服务'
-            itemNamePrefix = '<div class="item-name shrink">';
-            itemCostPrefix = '<div class="item-cost shrink">';
-            ifNoImg = true;
-        } else {
-            let itemImgFile;
-            if (mainOrderId === subOrderId) {
-                itemImgFile = `${createDay}_${mainOrderId}_${itemId}.jpg`;
-            } else {
-                itemImgFile = `${createDay}_${mainOrderId}_${subOrderId}_${itemId}.jpg`;
-            }
-
-            if (four04Images.includes(itemImgFile+'.404')) {
-                subOrderImg = `<img src="../static/404-not-found.jpg">`;
-            } else {
-                subOrderImg = `<img src="//localhost:4000/item-images/${createDay.split('-')[0]}/${itemImgFile}">`;
-            }
-        }
-
         let unitPrice = subOrderData.priceInfo.realTotal;
         let quantity = subOrderData.quantity;
+        let subOrderImg = makeSubOrderImg(mainOrderId, subOrderId, itemId, createDay, itemInfo.pic, unitPrice);
 
         // subOrderId will auto-changed to suborderid
         // https://www.designcise.com/web/tutorial/how-to-check-if-a-string-contains-another-substring-in-javascript
-        let subOrderPrefix = `<div class="sub-order" data-suborderid="${subOrderId}">`;
+        let subOrder = $(`<div class="sub-order" data-suborderid="${subOrderId}"></div>`);
         if (isNaN(funcArgs.itemName)) { // if not order ID
             if (funcArgs.itemName !== undefined) {
                 if (itemTitle.search(new RegExp(funcArgs.itemName, 'i')) === -1) {
-                    subOrderPrefix = `<div class="sub-order is-off" data-suborderid="${subOrderId}">`;
+                    subOrder = $(`<div class="sub-order is-off" data-suborderid="${subOrderId}"></div>`);
                 }
             }
 
             if (funcArgs.itemName_t !== funcArgs.itemName) {
                 if (itemTitle.search(new RegExp(funcArgs.itemName_t, 'i')) !== -1) {
-                    subOrderPrefix = `<div class="sub-order" data-suborderid="${subOrderId}">`;
+                    subOrder = $(`<div class="sub-order" data-suborderid="${subOrderId}"></div>`);
                 }
             }
         }
 
-        let subOrderLeft;
-        if (ifNoImg) {
-            subOrderLeft = `<div class="sub-order-left"></div>`;
-        } else {
-            subOrderLeft = `
-                <div class="sub-order-left">
-                    <div class="img-content">
-                        ${subOrderImg}
-                    </div>
-                    <div class="img-modal-container is-off">
-                        <div class="img-modal">
-                            <div class="img-modal-background"></div>
-                            <div class="img-modal-content">
-                                ${subOrderImg}
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            `;
-        }
-
-        let subOrder = `
-        ${subOrderPrefix}
-            ${subOrderLeft}
-            <div class="sub-order-right">
-                ${itemNamePrefix}
-                    <a href="${itemInfo.itemUrl}" target="_blank" rel="noreferrer">
-                        <span>${itemTitle}</span>
-                    </a>
-                </div>
-                ${itemCostPrefix}
-                    <span>单价: ${unitPrice}</span>
-                    <span>数量: ${quantity}</span>
-                </div>
-            </div>
-        </div>`;
+        let subOrderLeft = makeSubOrderLeft(subOrderImg);
+        let subOrderRight = makeSubOrderRight(subOrderImg, itemInfo, unitPrice, quantity);
+        subOrder.append($(subOrderLeft));
+        subOrder.append($(subOrderRight));
         subOrdersList.append($(subOrder));
     });
-    return subOrders
+    return subOrders;
 };
 
 let toggleImgModel = function() {

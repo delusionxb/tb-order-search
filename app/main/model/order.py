@@ -99,7 +99,10 @@ class Order:
 
       # fill in shopName field
       if shopName:
-        search_conditions['seller.shop'] = {'$regex': '{}'.format(shopName), '$options': '$i'}
+        search_conditions['$or'] = [
+          {'seller.shop': {'$regex': '{}'.format(shopName), '$options': '$i'}},
+          {'seller.nick': {'$regex': '{}'.format(shopName), '$options': '$i'}}
+        ]
 
       # fill in createDay field
       createDay = {}
@@ -216,6 +219,10 @@ def test():
         maxCreateDay='2009-05-01',
       )
     ))
+
+    print(Order.populate_search_conditions(dict(
+      shopName = '葱花'
+    )))
 
 
   def test_get_totalCount_by_conditions():

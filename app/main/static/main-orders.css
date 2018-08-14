@@ -135,8 +135,20 @@
     padding: 1rem;
 }
 
+.item-extra {
+    padding-left: 1rem;
+    font-size: 0.9rem;
+    color: darkcyan;
+}
+
+.item-extra span {
+    margin-left: 1rem
+}
+
 .item-cost {
     padding: 1rem;
+    font-size: 0.9rem;
+    color: darkcyan;
 }
 
 .item-cost span {

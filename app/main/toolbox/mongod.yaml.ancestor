@@ -1,0 +1,25 @@
+# https://docs.mongodb.com/manual/reference/configuration-options/
+# use 'true' or 'false' for boolean value
+
+systemLog:
+   path: ${mongo_logs}/mongod.log
+   logAppend: false
+   logRotate: rename
+   destination: file
+   timeStampFormat: iso8601-local
+
+processManagement:
+   fork: true
+   pidFilePath: ${mongo_root}/mongod.pid
+
+net:
+   bindIp: 0.0.0.0
+   port: 27017
+   maxIncomingConnections: 100
+   ipv6: false
+
+storage:
+   dbPath: ${mongo_data}
+   journal:
+      enabled: true
+   directoryPerDB: true

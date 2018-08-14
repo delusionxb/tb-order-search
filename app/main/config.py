@@ -7,7 +7,10 @@ class Config:
 
 
 class DevConfig(Config):
+  SERVER_HOST = '0.0.0.0'
+  SERVER_PORT = 7770
   DEBUG = True
+
   db_credential = 'scott:tiger'
   db_host = '127.0.0.1:3306'
   db_name = 'sqlalchemy_test'

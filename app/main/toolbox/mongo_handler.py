@@ -5,10 +5,11 @@
 # https://docs.mongodb.com/v3.6/mongo/
 
 import pymongo
-import os, json, glob
+import sys, os, json, glob
 
 db = None
 client = None
+
 
 def initialize():
   global db, client
@@ -19,8 +20,7 @@ def initialize():
   db = client['delusionxb']
 
 
-def insert_mainOrders():
-  main_orders_path = '{}/python/spider/main-orders'.format(os.getenv('HOME'))
+def insert_mainOrders(main_orders_path):
   for json_file in glob.glob('{}/*/*json'.format(main_orders_path)):
     print('insert json data from file {}'.format(json_file))
     json_data = json.load(open(json_file, 'r'))
@@ -30,8 +30,7 @@ def insert_mainOrders():
   pass
 
 
-def insert_subOrders():
-  main_orders_path = '{}/python/spider/main-orders'.format(os.getenv('HOME'))
+def insert_subOrders(main_orders_path):
   for json_file in glob.glob('{}/*/*json'.format(main_orders_path)):
     print('insert json data from file {}'.format(json_file))
     json_data = json.load(open(json_file, 'r'))
@@ -65,8 +64,7 @@ def insert_subOrders():
   pass
 
 
-def update_subOrders():
-  main_orders_path = '{}/python/spider/main-orders'.format(os.getenv('HOME'))
+def update_subOrders(main_orders_path):
   for json_file in glob.glob('{}/*/*json'.format(main_orders_path)):
     print('update json data from file {}'.format(json_file))
     json_data = json.load(open(json_file, 'r'))
@@ -80,10 +78,6 @@ def update_subOrders():
 
   pass
 
-
-def test1():
-  json_data = json.load(open('/Users/frank/python/spider/main-orders/2009/2009-04-03_1654429193.json', 'r'))
-  print(json_data.get('payInfo'))
 
 
 def search():
@@ -131,11 +125,15 @@ def search():
 
 
 if __name__ == '__main__':
+  if len(sys.argv) == 1:
+    main_orders_path = '{}/python/spider/main-orders'.format(os.getenv('HOME'))
+  else:
+    main_orders_path = sys.argv[1]
+
   initialize()
-  # insert_mainOrders()
-  # insert_subOrders()
-  update_subOrders()
+  insert_mainOrders(main_orders_path)
+  insert_subOrders(main_orders_path)
+  # update_subOrders(main_orders_path)
   # search()
 
-  # test1()
   pass

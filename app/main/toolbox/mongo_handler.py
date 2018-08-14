@@ -24,7 +24,7 @@ def insert_mainOrders(main_orders_path):
   for json_file in glob.glob('{}/*/*json'.format(main_orders_path)):
     print('insert json data from file {}'.format(json_file))
     json_data = json.load(open(json_file, 'r'))
-    json_data['totalCost'] = float(json_data.get('﻿payInfo').get('﻿actualFee'))
+    json_data['totalCost'] = float(json_data.get('payInfo').get('actualFee'))
     db.mainOrders.insert(json_data)
     # print(json_data)
   pass
@@ -91,16 +91,16 @@ def search():
   # count = documents.count()
 
   # get first 10 documents from desc ordering by 'createDay', or by auto-generated '_id'
-  # ﻿db.subOrders.find().sort({'createDay':-1}).limit(10)
-  # ﻿db.subOrders.find().sort({_id:-1}).limit(10)
+  # db.subOrders.find().sort({'createDay':-1}).limit(10)
+  # db.subOrders.find().sort({_id:-1}).limit(10)
 
   # filter out '_id' from results, you cannot specify both 0 and 1 except '_id', otherwise there will be
   # "pymongo.errors.OperationFailure: Projection cannot have a mix of inclusion and exclusion."
   # either {'_id': 0, name: 1, age: 1} or {name: 0, age: 0}, other fields are 1 by default
-  # ﻿db.subOrders.find({}, {'_id': 0})
+  # db.subOrders.find({}, {'_id': 0})
 
   # regular expression
-  # ﻿db.subOrders.find({'seller.shop': {'$regex': '^.*漫画.*$'}})
+  # db.subOrders.find({'seller.shop': {'$regex': '^.*漫画.*$'}})
   # https://stackoverflow.com/questions/1863399/mongodb-is-it-possible-to-make-a-case-insensitive-query
   # db.subOrders.find({subOrders: {$regex: /^.*blame.*$/i}})
 

@@ -123,7 +123,14 @@ let toggleConfigPanel = function() {
                 let configs = saveConfig();
                 ordersPerPage = configs.ordersPerPage;
                 createDaySort = configs.createDaySort;
-                makePagination4Search(getSearchData());
+
+                let searchData = getSearchData();
+                // https://stackoverflow.com/questions/679915/how-do-i-test-for-an-empty-javascript-object
+                if (Object.keys(searchData).length === 0 && searchData.constructor === Object) {
+                    makePagination();
+                } else {
+                    makePagination4Search(searchData);
+                }
             },
         });
     });

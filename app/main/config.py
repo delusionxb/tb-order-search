@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 
+import socket
+
 class Config:
   DEBUG = False
   SECRET_KEY = 'A brown quick FOX jumps over the lazy DOG.'
@@ -7,8 +9,15 @@ class Config:
 
 
 class DevConfig(Config):
-  SERVER_HOST = '0.0.0.0'
-  SERVER_PORT = 7770
+  # http://flask.pocoo.org/docs/1.0/config/#SERVER_NAME
+  # https://stackoverflow.com/questions/20792499/how-to-get-fully-qualified-host-name-in-python
+
+  hostname = socket.getfqdn()
+  domain_name = '.9ztrade.com'
+  if hostname in ['production-02', 'production-03', 'production-04']:
+    hostname += domain_name
+
+  SERVER_NAME = '{}:7770'.format(hostname)
   DEBUG = True
 
   db_credential = 'scott:tiger'

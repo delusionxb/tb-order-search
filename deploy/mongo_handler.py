@@ -126,7 +126,7 @@ def search():
 
 if __name__ == '__main__':
   if len(sys.argv) == 1:
-    main_orders_path = '{}/python/spider/main-orders'.format(os.getenv('HOME'))
+    main_orders_path = os.path.dirname(os.path.abspath(__file__)).rsplit('/', 1)[0]
   else:
     main_orders_path = sys.argv[1]
 

@@ -1,0 +1,12 @@
+server {
+  listen 7776;
+  server_name localhost;
+  charset UTF-8;
+  root somewhere;
+
+  access_log /etc/nginx/logs/tb-os-access.log;
+  error_log /etc/nginx/logs/tb-os-error.log;
+
+  location /item-images/ {
+  }
+}

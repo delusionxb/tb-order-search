@@ -3,3 +3,5 @@
 **/__pycache__/
 item-images/
 main-orders/
+deploy/item-images
+tb*.log

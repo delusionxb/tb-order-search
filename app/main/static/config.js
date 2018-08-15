@@ -4,7 +4,8 @@ let
     createDaySort = -1,
     pageCount = 0,
     pageGroupCount = 5,
-    paginationRightBorder = 0;
+    paginationRightBorder = 0,
+    imageHost = 'localhost';
 
 
 // populate <section class="config-container"></section> with configWrapperHtml

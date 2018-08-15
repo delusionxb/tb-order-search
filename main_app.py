@@ -18,14 +18,11 @@ def index():
 api.init_app(main_app)
 main_app.app_context().push()
 
-list_routers = 0
+def list_available_routes():
+  for i, router in enumerate(main_app.url_map.iter_rules()):
+    print(i, router)
 
 
 if __name__ == '__main__':
-  if list_routers:
-    for i, router in enumerate(main_app.url_map.iter_rules()):
-      print(i, router)
-
+  # list_available_routes()
   main_app.run()
-
-  pass

@@ -19,7 +19,7 @@
 - item-images
   - scp /Users/frank/python/spider/item-images.tgz to target machine
   - tar zxf /somewhere/item-images.tgz -C /somewhere/tb-order-search
-  - start nginx, run 'sudo /somewhere/tb-order-search/deploy/prepare.sh nginx'
+  - start nginx, prepare config.js and gunicorn.conf, run 'sudo /somewhere/tb-order-search/deploy/prepare.sh prepare'
 - mainOrders and subOrders in mongodb
   - download mongodb from https://www.mongodb.com/download-center#community
   - unpack to /somewhere/mongodb-linux-x86_64-xyz
@@ -27,6 +27,7 @@
   - start mongodb, run '/somewhere/mongodb-linux-x86_64-xyz/mongod.sh up'
   - import data, run '/somewhere/tb-order-search/deploy/mongo_handler.py'
   - try to connect to remote mongodb by client tool like Robo 3T
- 
-### Start tb-order-search
-- run '/somewhere/tb-order-search/deploy/prepare.sh gunicorn'
+
+### Start or stop tb-order-search
+- start '/somewhere/tb-order-search/deploy/prepare.sh gstart'
+- stop '/somewhere/tb-order-search/deploy/prepare.sh gstop'

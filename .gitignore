@@ -5,3 +5,4 @@ item-images/
 main-orders/
 deploy/item-images
 tb*.log
+gunicorn.pid

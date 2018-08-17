@@ -181,8 +181,8 @@ let resetSearchData = function() {
 
 let bindSearchFormBtns = function() {
     let searchInputs = $('.base-search-form>.input, .condition-search>.input');
-    searchInputs.keypress(function() {
-        if (event.code === 'Enter') {
+    searchInputs.keypress(function(event) {
+        if (event.key === 'Enter') {
             log('main-search.bindSearchFormBtns() by Enter');
             event.target.blur(); // make target lose focus
             event.preventDefault(); // prevent default event

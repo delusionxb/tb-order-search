@@ -22,11 +22,9 @@
 # isdigit(), isnumeric()
 # https://www.cnblogs.com/willowj/p/8045203.html
 
-import json, pymongo
-from app.main import get_mongodb
+import json
 from app.main.toolbox import hanZ_converter
-
-mdb = get_mongodb('dev')
+from app.main.model import mdb
 
 
 class Order:

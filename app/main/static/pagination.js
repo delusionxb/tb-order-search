@@ -182,5 +182,5 @@ let makePagination4Search = function(searchData) {
 };
 
 
-populatePaginationContainer();
-makePagination();
+// populatePaginationContainer();
+// makePagination();

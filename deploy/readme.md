@@ -19,7 +19,8 @@
 - item-images
   - scp /Users/frank/python/spider/item-images.tgz to target machine
   - tar zxf /somewhere/item-images.tgz -C /somewhere/tb-order-search
-  - start nginx, prepare config.js and gunicorn.conf, run 'sudo /somewhere/tb-order-search/deploy/prepare.sh prepare'
+  - start nginx, run 'sudo /somewhere/tb-order-search/deploy/prepare.sh nginx'
+  - prepare config.js and gunicorn.conf, run '/somewhere/tb-order-search/deploy/prepare.sh config'
 - mainOrders and subOrders in mongodb
   - download mongodb from https://www.mongodb.com/download-center#community
   - unpack to /somewhere/mongodb-linux-x86_64-xyz
@@ -31,3 +32,7 @@
 ### Start or stop tb-order-search
 - start '/somewhere/tb-order-search/deploy/prepare.sh gstart'
 - stop '/somewhere/tb-order-search/deploy/prepare.sh gstop'
+
+#### Why gunicorn instead of flask
+- http://flask.pocoo.org/docs/1.0/deploying/
+- While lightweight and easy to use, Flask’s built-in server is not suitable for production as it doesn’t scale well.

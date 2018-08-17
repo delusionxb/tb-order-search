@@ -11,6 +11,7 @@ order_ns = Namespace('order', description='order api')
 
 @order_ns.route('totalCount_byConditions')
 class GetTotalCountByConditions(Resource):
+  @login_required
   @order_ns.expect(order_ns.model('GetTotalCountByConditions', dict(
     itemName=fields.String,
     minTotalCost=fields.Integer(description='min total cost', request=False),
@@ -26,6 +27,7 @@ class GetTotalCountByConditions(Resource):
 
 @order_ns.route('byConditions')
 class GetOrdersByConditions(Resource):
+  @login_required
   @order_ns.expect(order_ns.model('GetOrdersByConditions', dict(
     itemName = fields.String,
     minTotalCost = fields.Integer(description='min total cost', request=False),
@@ -47,6 +49,7 @@ class GetOrdersByConditions(Resource):
 
 @order_ns.route('totalCount')
 class GetTotalCount(Resource):
+  @login_required
   def get(self):
     return Order.totalCount
 
@@ -72,6 +75,7 @@ class GetOrdersByPage(Resource):
   parser.add_argument('ordersPerPage', type=int, help='orders per page')
   parser.add_argument('createDaySort', type=int, help='create day sorting')
 
+  @login_required
   @order_ns.expect(parser)
   def get(self):
     print('GetOrdersByPage() -> args from request: {}'.format(request.args))

@@ -1,4 +1,8 @@
 #!/bin/bash
+#
+# why 'head | awk' fails in script but works in command line
+# https://stackoverflow.com/questions/3452339/how-do-i-use-output-from-awk-in-another-command
+# https://superuser.com/questions/742238/piping-tail-f-into-awk
 
 
 whereAmI=$(cd `dirname $0`; pwd)
@@ -10,7 +14,7 @@ if [[ "production-02 production-03 production-04" =~ "$host" ]]; then
   host="${host}.9ztrade.com"
 fi
 
-if [[ "$action" == 'prepare' ]]; then
+if [[ "$action" == 'nginx' ]]; then
   if [[ `id -u` -ne 0 ]]; then
     echo "needs root or sudo to prepare nginx"
     exit 11
@@ -34,33 +38,35 @@ if [[ "$action" == 'prepare' ]]; then
 
   echo "check item-images"
   touch ${projectPath}/item-images/im-ready
-  if [[ "`curl -sI http://${host}:7776/item-images/im-ready | head -1 | awk '{print $2}'`" -eq 200 ]]; then
+  if [[ "`unbuffer curl -sI http://${host}:7776/item-images/im-ready | head -1 | awk '{print $2}'`" -eq 200 ]]; then
     echo "item-images is ready"
   else
     echo "something wrong with nginx config, probably root location or port conflict"
   fi
 
+elif [[ "$action" == 'config' ]]; then
   echo "prepare config.js and gunicorn.conf"
   sed -i "s#\ \ \ \ imageHost = 'localhost'#\ \ \ \ imageHost = '${host}'#g" ${projectPath}/app/main/static/config.js
-  sed -i "s#\ \ \ \ imageHost = 'localhost:7770'#\ \ \ \ imageHost = '${host}:7770'#g" ${projectPath}/deploy/gunicorn.conf
+  sed -i "s#bind = 'localhost:7770'#bind = '${host}:7770'#g" ${projectPath}/deploy/gunicorn.conf
 
 elif [[ "$action" == 'gstart' ]]; then
   echo "start gunicorn"
   cd $projectPath && /usr/local/bin/gunicorn main_app:main_app -c ./deploy/gunicorn.conf
 
   echo "check gunicorn"
-  if [[ "`curl -sI http://${host}:7770 | head -1 | awk '{print $2}'`" -eq 200 ]]; then
+  if [[ "`unbuffer curl -sI http://${host}:7770 | head -1 | awk '{print $2}'`" -eq 200 ]]; then
     echo "gunicorn is ready"
   else
     echo "something wrong with gunicorn config, probably application module or port conflict"
   fi
 
 elif [[ "$action" == 'gstop' ]]; then
-  echo "stop gunicorn"
   gunicorn_pid="`ps -eo pid,command | grep 'gunicorn.*main_app:main_app' | grep -v grep | sort | head -1 | awk '{print $1}'`"
+  echo "stop gunicorn by [kill -9 $gunicorn_pid]"
   kill -9 $gunicorn_pid
 
-  if [[ "`cat ${projectPath}/gunicorn.pid`" == "$gunicorn_pid" ]]; then
+  if [[ -f ${projectPath}/gunicorn.pid && "`cat ${projectPath}/gunicorn.pid`" == "$gunicorn_pid" ]]; then
+    echo "remove gunicorn.pid"
     rm -f ${projectPath}/gunicorn.pid
   fi
 fi

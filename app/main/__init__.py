@@ -33,6 +33,6 @@ def create_app(config_name):
   app.config.from_object(config_obj)
 
   # db.init_app(app)
-  # bcrypt.init_app(app)
-  # init_login_manager(app)
+  bcrypt.init_app(app)
+  init_login_manager(app)
   return app

@@ -1,8 +1,13 @@
 .config-cog {
     position: fixed;
     top: 2rem;
-    left: 2rem;
+    left: 1.5rem;
     cursor: pointer;
+}
+
+.config-cog>span {
+    display: inline-block;
+    transform: scale(1.1);
 }
 
 .config-options-container {

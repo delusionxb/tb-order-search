@@ -37,7 +37,7 @@ let makeMainOrdersList = function(orderData, funcArgs={}) {
         let mainOrderId = mainOrderData.id;
         let orderStatus = mainOrderData.statusInfo.text;
 
-        let subOrders = makeSubOrders(mainOrderData, createDay, mainOrderId, mainOrderData.payInfo, orderStatus, funcArgs);
+        let subOrders = makeSubOrders(mainOrderData.subOrders, createDay, mainOrderId, mainOrderData.payInfo, orderStatus, funcArgs);
         funcArgs.hasHiddenSubOrder = subOrders.get(0).outerHTML.search(new RegExp('div class="sub-order is-off"')) !== -1;
         let orderTopic = makeOrderTopic(mainOrderData, createDay, mainOrderId, mainOrderData.seller, funcArgs);
 
@@ -56,7 +56,7 @@ let makeOrderTopic = function(mainOrderData, createDay, mainOrderId, seller, fun
     log(`main-orders.makeOrderTopic() with [orderId: ${mainOrderId}, createDay: ${createDay}]`);
     let orderOperations = mainOrderData.statusInfo.operations;
     let orderTopicRight = $('<div class="order-topic-right"></div>');
-    $.each(orderOperations, function(i, operation) {
+    $.each(orderOperations, function(i, operation) { // keep '订单详情' or '查看物流', remove '双方已评'
         if (operation.id === 'viewDetail' || operation.id === 'viewLogistic') {
             let opSpan = `
                 <span>
@@ -206,7 +206,7 @@ let makeSubOrderRight = function(subOrderImg, itemInfo, unitPrice, quantity) {
     `;
 };
 
-let makeSubOrders = function(mainOrderData, createDay, mainOrderId, payInfo, orderStatus, funcArgs={}) {
+let makeSubOrders = function(subOrdersData, createDay, mainOrderId, payInfo, orderStatus, funcArgs={}) {
     log(`main-orders.makeSubOrders() with [orderId: ${mainOrderId}, createDay: ${createDay}]`);
     let subOrders = $('<div class="sub-orders"></div>');
     let subOrdersList = $('<div class="sub-orders-list"></div>');
@@ -216,7 +216,7 @@ let makeSubOrders = function(mainOrderData, createDay, mainOrderId, payInfo, ord
     subOrders.append(subOrdersTotal);
     subOrdersTotal.append(makePayInfo(payInfo, orderStatus));
 
-    $.each(mainOrderData.subOrders, function(index, subOrderData) {
+    $.each(subOrdersData, function(index, subOrderData) {
         let subOrderId = subOrderData.id;
         let itemInfo = subOrderData.itemInfo;
         let itemId = itemInfo.id;
@@ -294,10 +294,10 @@ let getMainOrdersByPage = function(pageNo) {
             if (mainOrderContainer === undefined) {
                 mainOrderContainer = $('.main-orders-container');
             }
-            $('.main-orders-list').remove();
             let responseObj = JSON.parse(response);
             four04Images = responseObj['404_images'];
             let mainOrdersList = makeMainOrdersList(responseObj.mainOrders);
+            $('.main-orders-list').remove();
             mainOrderContainer.append(mainOrdersList);
             toggleImgModel();
         },
@@ -307,32 +307,37 @@ let getMainOrdersByPage = function(pageNo) {
 let getMainOrdersByConditions = function(pageNo, searchData) {
     log(`main-orders.getMainOrdersByConditions() with [searchData: ${JSON.stringify(searchData)}, pageNo: ${pageNo}]`);
     let itemName = searchData.itemName;
-    $.ajax({
-        url: `/toolbox/hanZS2T?hanZ=${itemName}`,
-        method: 'GET',
-        success: function(response) {
-            let itemName_t = response;
-            $.ajax({
-                url: `/order/byConditions`,
-                method: 'POST',
-                data: JSON.stringify(searchData),
-                contentType: 'application/json; charset=UTF-8',
-                success: function(response) {
-                    // log(response);
-                    let funcArgs = {
-                        itemName: itemName,
-                        itemName_t: itemName_t,
-                    };
 
-                    $('.main-orders-list').remove();
-                    let responseObj = JSON.parse(response);
-                    four04Images = responseObj['404_images'];
-                    let mainOrdersList = makeMainOrdersList(responseObj.mainOrders, funcArgs);
-                    mainOrderContainer.append(mainOrdersList);
-                    toggleImgModel();
-                    toggleHiddenSubOrders();
-                },
-            });
+    if (isNaN(itemName)) {
+        $.ajax({
+            url: `/toolbox/hanZS2T?hanZ=${itemName}`,
+            method: 'GET',
+            success: function(response) {
+                sendByConditionAjax(searchData, {
+                    itemName: itemName,
+                    itemName_t: response,
+                });
+            },
+        });
+    } else {
+        sendByConditionAjax(searchData);
+    }
+};
+
+let sendByConditionAjax = function(searchData, funcArgs={}) {
+    $.ajax({
+        url: `/order/byConditions`,
+        method: 'POST',
+        data: JSON.stringify(searchData),
+        contentType: 'application/json; charset=UTF-8',
+        success: function(response) {
+            let responseObj = JSON.parse(response);
+            four04Images = responseObj['404_images'];
+            let mainOrdersList = makeMainOrdersList(responseObj.mainOrders, funcArgs);
+            $('.main-orders-list').remove();
+            mainOrderContainer.append(mainOrdersList);
+            toggleImgModel();
+            toggleHiddenSubOrders();
         },
     });
 };

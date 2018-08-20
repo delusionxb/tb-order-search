@@ -102,6 +102,15 @@ let saveConfig = function() {
 let toggleConfigPanel = function() {
     log('config.toggleConfigPanel()');
     let configSelected;
+
+    $('.config-cog').click(function(event) {
+        log('opening config panel');
+        configSelected = storeConfig();
+        $('.config-options-container').animate({
+            left: '+=12rem',
+        });
+    });
+
     $('.config-close-icon, .button.is-info.cancel').click(function(event) {
         log('closing config panel');
         $('.config-options-container').animate({
@@ -133,14 +142,6 @@ let toggleConfigPanel = function() {
                     makePagination4Search(searchData);
                 }
             },
-        });
-    });
-
-    $('.config-cog').click(function(event) {
-        log('opening config panel');
-        configSelected = storeConfig();
-        $('.config-options-container').animate({
-            left: '+=12rem',
         });
     });
 };

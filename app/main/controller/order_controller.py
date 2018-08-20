@@ -2,7 +2,7 @@
 
 from flask import request
 from flask_restplus import Resource, Namespace, fields
-from flask_login import login_required, current_user
+from flask_login import login_required
 from app.main.model.order import Order
 from app.main.toolbox import get_404_images
 
@@ -51,6 +51,7 @@ class GetOrdersByConditions(Resource):
 class GetTotalCount(Resource):
   @login_required
   def get(self):
+    print('GetTotalCount()')
     return Order.totalCount
 
 

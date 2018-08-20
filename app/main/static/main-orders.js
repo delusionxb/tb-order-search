@@ -252,8 +252,8 @@ let makeSubOrders = function(subOrdersData, createDay, mainOrderId, payInfo, ord
     return subOrders;
 };
 
-let toggleImgModel = function() {
-    log('main-orders.toggleImgModel()');
+let bindAction2ImgModel = function() {
+    log('main-orders.bindAction2ImgModel()');
     let imgContents = $('.img-content');
     let imgModalBackgrounds = $('.img-modal-background');
     let subOrders = imgContents.closest('.sub-order');
@@ -270,8 +270,8 @@ let toggleImgModel = function() {
     });
 };
 
-let toggleHiddenSubOrders = function() {
-    log('main-orders.toggleHiddenSubOrders()');
+let bindAction2HiddenSubOrders = function() {
+    log('main-orders.bindAction2HiddenSubOrders()');
     let orderTopicHiddens = $('.order-topic-hidden');
     let mainOrders = orderTopicHiddens.closest('.main-order');
     $.each(orderTopicHiddens, function(index, orderTopicHidden) {
@@ -286,7 +286,8 @@ let toggleHiddenSubOrders = function() {
 };
 
 let getMainOrdersByPage = function(pageNo) {
-    log(`main-orders.requestMainOrdersJson() with pageNo: ${pageNo}`);
+    log(`main-orders.requestMainOrdersJson(pageNo=${pageNo})`);
+    this.name = 'getMainOrdersByPage';
     $.ajax({
         url: `/order/byPage?pageNo=${pageNo}&ordersPerPage=${ordersPerPage}&createDaySort=${createDaySort}`,
         method: 'GET',
@@ -299,13 +300,14 @@ let getMainOrdersByPage = function(pageNo) {
             let mainOrdersList = makeMainOrdersList(responseObj.mainOrders);
             $('.main-orders-list').remove();
             mainOrderContainer.append(mainOrdersList);
-            toggleImgModel();
+            bindAction2ImgModel();
         },
     });
 };
 
 let getMainOrdersByConditions = function(pageNo, searchData) {
-    log(`main-orders.getMainOrdersByConditions() with [searchData: ${JSON.stringify(searchData)}, pageNo: ${pageNo}]`);
+    log(`main-orders.getMainOrdersByConditions(pageNo=${pageNo}, searchData=${JSON.stringify(searchData)})`);
+    this.name = 'getMainOrdersByConditions';
     let itemName = searchData.itemName;
 
     if (isNaN(itemName)) {
@@ -336,8 +338,8 @@ let sendByConditionAjax = function(searchData, funcArgs={}) {
             let mainOrdersList = makeMainOrdersList(responseObj.mainOrders, funcArgs);
             $('.main-orders-list').remove();
             mainOrderContainer.append(mainOrdersList);
-            toggleImgModel();
-            toggleHiddenSubOrders();
+            bindAction2ImgModel();
+            bindAction2HiddenSubOrders();
         },
     });
 };

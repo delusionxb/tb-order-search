@@ -17,11 +17,11 @@
 
 <body>
     <div class="login-container"></div>
-    <div class="logout-container">
+    <div class="logout-container is-off">
         <span><i class="fas fa-sign-out-alt fa-2x"></i></span>
     </div>
 
-    <div class="super-main-container">
+    <div class="super-main-container is-off">
         <section class="config-container"></section>
         <section class="top-bottom-container"></section>
         <section class="main-search-container"></section>
@@ -38,13 +38,15 @@
     <script src="../static/main-search.js"></script>
     <script src="../static/top-bottom.js"></script>
 
+    <script src="../static/entrance.js"></script>
+
     <script>
         let debugSuperMain = function() {
             $('.login-container, .logout-container').addClass('is-off');
             $('.super-main-container').removeClass('is-off');
         };
 
-        debugSuperMain();
+        // debugSuperMain();
     </script>
 </body>
 </html>

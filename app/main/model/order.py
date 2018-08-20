@@ -33,7 +33,7 @@ class Order:
 
   @staticmethod
   def get_mainOrders_by_page(pageNo=1, ordersPerPage=10, createDaySort=-1, indent=None):
-    print('pageNo {}, ordersPerPage {}, createDaySort {}'.format(pageNo, ordersPerPage, createDaySort))
+    print('get_mainOrders_by_page() -> pageNo {}, ordersPerPage {}, createDaySort {}'.format(pageNo, ordersPerPage, createDaySort))
     # the command below works in mongodb shell, but not in pymongo
     # db.mainOrders.find({}, {'_id':0}).sort({'orderInfo.createDay': -1}).skip((pageNo - 1) * ordersPerPage).limit(ordersPerPage)
     #
@@ -125,12 +125,13 @@ class Order:
       elif tradeStatus == 'finished':
         search_conditions['tradeStatus1'] = 'TRADE_FINISHED'
 
+    print('populate_search_conditions() -> search_conditions: {}'.format(search_conditions))
     return search_conditions
 
   @staticmethod
   def get_totalCount_by_conditions(search_data):
+    print('get_totalCount_by_conditions() -> search_data: [{}]'.format(search_data))
     search_conditions = Order.populate_search_conditions(search_data)
-    print('search_conditions: {}'.format(search_conditions))
     return mdb.subOrders.find(search_conditions).count()
 
   @staticmethod
@@ -147,8 +148,9 @@ class Order:
     :param indent:
     :return:
     """
+
+    print('get_mainOrders_by_conditions() -> search_data: [{}]'.format(search_data))
     search_conditions = Order.populate_search_conditions(search_data)
-    print('search_conditions: {}'.format(search_conditions))
     pageNo = search_data.get('pageNo', 1)
     ordersPerPage = search_data.get('ordersPerPage', 10)
     createDaySort = search_data.get('createDaySort', -1)
@@ -173,12 +175,10 @@ class Order:
     return json.dumps([mainOrder for mainOrder in mainOrders], ensure_ascii=False, indent=indent)
 
 
-
 def test():
   def test_get_mainOrders_by_page():
     print(Order.totalCount)
     print(Order.get_mainOrders_by_page(indent=2))
-
 
   def test_populate_search_conditions():
     print(Order.populate_search_conditions(
@@ -221,7 +221,6 @@ def test():
     print(Order.populate_search_conditions(dict(
       shopName = '葱花'
     )))
-
 
   def test_get_totalCount_by_conditions():
     conditions1 = dict(
@@ -271,7 +270,6 @@ def test():
       result_json_str = Order.get_mainOrders_by_conditions(conditions)
       for result in json.loads(result_json_str):
         print(result)
-
 
   # test_get_mainOrders_by_page()
   test_populate_search_conditions()

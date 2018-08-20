@@ -28,3 +28,15 @@ let log = function() {
         console.log.apply(console, arguments);
     }
 };
+
+// https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/typeof
+let printAjaxError = function(jqXHR, status, error) {
+    log('=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+ LOGIN ERROR');
+    log(`status: ${status}, error: ${error}, jqXHR:`);
+    Object.keys(jqXHR).forEach(function(key) {
+        let value = jqXHR[key];
+        if (value !== undefined && typeof value !== 'function') {
+            log(`${key}: ${JSON.stringify(value)}`);
+        }
+    });
+};

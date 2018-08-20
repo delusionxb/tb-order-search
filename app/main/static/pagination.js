@@ -7,7 +7,7 @@ let populatePaginationContainer = function() {
             <div class="pagination-right">
                 <nav class="pagination is-centered" role="navigation" aria-label="pagination">
                   <a class="pagination-previous" disabled="disabled">Previous</a>
-                  <a class="pagination-next">Next page</a>
+                  <a class="pagination-next" disabled="disabled">Next page</a>
                   <ul class="pagination-list">
                     <!--<li><a class="pagination-link" aria-label="Goto page 1">1</a></li>-->
                     <!--<li><span class="pagination-ellipsis">&hellip;</span></li>-->
@@ -20,8 +20,8 @@ let populatePaginationContainer = function() {
     $('.pagination-container').append($(paginationWrapper));
 };
 
-let togglePreviousNext = function(currentPageNo) {
-    log(`pagination.togglePreviousNext() with currentPageNo: ${currentPageNo}`);
+let tunePreNextByPageNo = function(currentPageNo) {
+    log(`pagination.tunePreNextByPageNo(currentPageNo=${currentPageNo})`);
     if (currentPageNo === 1) { // disable previous if page number is 1
         $('.pagination-previous').attr('disabled', 'disabled');
         $('.pagination-next').removeAttr('disabled');
@@ -40,7 +40,7 @@ let togglePreviousNext = function(currentPageNo) {
 };
 
 let makePageList = function(currentPageNo=1, getMainOrdersFunc=getMainOrdersByPage, funcArgs='') {
-    log(`pagination.makePageList() with currentPageNo: ${currentPageNo}`);
+    log(`pagination.makePageList(currentPageNo=${currentPageNo}, getMainOrdersFunc=${getMainOrdersFunc.name}, funcArgs=${funcArgs})`);
     let pageListHtml = '';
     if (currentPageNo < pageGroupCount) { // when page number is [1, 4]
         if (pageCount <= pageGroupCount) {
@@ -87,7 +87,7 @@ let makePageList = function(currentPageNo=1, getMainOrdersFunc=getMainOrdersByPa
     pageList.append($(pageListHtml));
     $(`a[aria-label="Goto page ${currentPageNo}"]`).addClass('is-current');
 
-    togglePreviousNext(currentPageNo);
+    tunePreNextByPageNo(currentPageNo);
     let searchData = funcArgs.searchData;
     if (searchData !== undefined) {
         searchData.pageNo = currentPageNo;
@@ -108,8 +108,8 @@ let scroll2Top = function() {
     }, 200);
 };
 
-let bindBackAndForth = function(getMainOrdersFunc=getMainOrdersByPage, funcArgs='') {
-    log('pagination.bindBackAndForth()');
+let bindAction2BackAndForth = function(getMainOrdersFunc=getMainOrdersByPage, funcArgs='') {
+    log(`pagination.bindAction2BackAndForth(getMainOrdersFunc=${getMainOrdersFunc.name}, funcArgs=${funcArgs})`);
     let pageList = $('.pagination-list');
     pageList.off('click');
     pageList.click(function(event) { // click pagination-link
@@ -141,46 +141,55 @@ let bindBackAndForth = function(getMainOrdersFunc=getMainOrdersByPage, funcArgs=
     });
 };
 
+// https://tecadmin.net/get-current-url-web-browser-using-javascript/
 let makePagination = function() {
-    log('-------------------------------------------------------------------------------------------------------' +
-        '\n-------------------------------------------------------------------------------------------------------');
     log('pagination.makePagination(), loading and representation of web page starts');
     $.ajax({
         url: '/order/totalCount',
         method: 'GET',
-        success: function(response) {
-            log(`${response} results returned in total from makePagination()`);
-            $('.return-count>span').text(response);
-            pageCount = Math.ceil(response / ordersPerPage);
-            paginationRightBorder = pageCount - pageGroupCount + 1;
+        success: function(response, status, jqXHR) {
+            // log(JSON.stringify(jqXHR));
+            if (jqXHR.responseJSON !== undefined && jqXHR.status === 200) {
+                log('=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+');
+                log(`${response} results returned in total from makePagination()`);
+                if (window.location.pathname !== '/byPage') {
+                    window.history.pushState(null, '', '/byPage');
+                }
+                // log(`makePagination: ${$('.login-container').attr('class')}`);
+                toggleContainers('afterLogin');
 
-            makePageList(); // called when page loaded the 1st time, currentPageNo is 1
-            bindBackAndForth();
+                $('.return-count>span').text(response);
+                pageCount = Math.ceil(response / ordersPerPage);
+                paginationRightBorder = pageCount - pageGroupCount + 1;
+
+                makePageList(); // called when page loaded the 1st time, currentPageNo is 1
+                bindAction2BackAndForth();
+            }
         },
+        error: printAjaxError,
     });
 };
 
 let makePagination4Search = function(searchData) {
-    log('-------------------------------------------------------------------------------------------------------' +
-        '\n-------------------------------------------------------------------------------------------------------');
-    log('pagination.makePagination4Search(), loading and representation of web page starts');
+    log(`pagination.makePagination4Search(searchData=${JSON.stringify(searchData)}), loading and representation of web page starts`);
     $.ajax({
         url: `/order/totalCount_byConditions`,
         method: 'POST',
         data: JSON.stringify(searchData),
         contentType: 'application/json; charset=UTF-8',
-        success: function(response) {
+        success: function(response, status, jqXHR) {
+            log('=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+');
             log(`${response} results returned in total from makePagination4Search()`);
+            if (window.location.pathname !== '/byConditions') {
+                window.history.pushState(null, '', '/byConditions');
+            }
             $('.return-count>span').text(response);
             pageCount = Math.ceil(response / ordersPerPage);
             paginationRightBorder = pageCount - pageGroupCount + 1;
 
             makePageList(1, getMainOrdersByConditions, {'searchData': searchData});
-            bindBackAndForth(getMainOrdersByConditions, {'searchData': searchData});
+            bindAction2BackAndForth(getMainOrdersByConditions, {'searchData': searchData});
         },
+        error: printAjaxError,
     });
 };
-
-
-// populatePaginationContainer();
-// makePagination();

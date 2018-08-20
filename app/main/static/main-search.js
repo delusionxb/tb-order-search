@@ -96,8 +96,8 @@ let populateMainSearchContainer = function() {
     $('.main-search-container').append($(mainSearchWrapper));
 };
 
-let toggleSearchExtension = function() {
-    log('main-search.toggleSearchExtension()');
+let bindAction2SearchExtension = function() {
+    log('main-search.bindAction2SearchExtension()');
     $('.base-search-extension').click(function(event) {
         $('.base-search-extension').find('span:nth-child(2), span:nth-child(3)').toggleClass('is-off');
         $('.condition-search-container').toggle(400);
@@ -179,11 +179,11 @@ let resetSearchData = function() {
     $('select[class="createDay-type-byMonth"]>option:nth-child(1)').prop('selected', 'selected');
 };
 
-let bindSearchFormBtns = function() {
+let bindAction2SearchFormBtns = function() {
     let searchInputs = $('.base-search-form>.input, .condition-search>.input');
     searchInputs.keypress(function(event) {
         if (event.key === 'Enter') {
-            log('main-search.bindSearchFormBtns() by Enter');
+            log('main-search.bindAction2SearchFormBtns() by Enter');
             event.target.blur(); // make target lose focus
             event.preventDefault(); // prevent default event
             makePagination4Search(getSearchData());
@@ -198,33 +198,27 @@ let bindSearchFormBtns = function() {
     });
 
     $('.base-search-form>.button.btn-search').click(function(event) {
-        log('main-search.bindSearchFormBtns() by Conditions');
+        log('main-search.bindAction2SearchFormBtns() by Conditions');
         makePagination4Search(getSearchData());
     });
 
     $('.base-search-all>.button.btn-all').click(function(event) {
-        log('main-search.bindSearchFormBtns() by All');
+        log('main-search.bindAction2SearchFormBtns() by All');
         resetSearchData();
         makePagination();
     });
 
     $('.base-search-form>.button.btn-reset').click(function(event) {
-        log('main-search.bindSearchFormBtns() by Reset');
+        log('main-search.bindAction2SearchFormBtns() by Reset');
         resetSearchData();
     });
 };
 
-let toggleDateRangeType = function() {
-    log('main-search.toggleDateRangeType()');
+let bindAction2DateRangeType = function() {
+    log('main-search.bindAction2DateRangeType()');
     let dateRangeType = $('select[class="createDay-type"]');
     dateRangeType.change(function(event) {
         $('div.createDay-type-byMonth').toggle(400);
         $('.createDay-type-byRange').toggle(400);
     });
 };
-
-
-populateMainSearchContainer();
-toggleSearchExtension();
-toggleDateRangeType();
-bindSearchFormBtns();

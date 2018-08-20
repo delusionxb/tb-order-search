@@ -1,13 +1,4 @@
 
-let
-    ordersPerPage = 10,
-    createDaySort = -1,
-    pageCount = 0,
-    pageGroupCount = 5,
-    paginationRightBorder = 0,
-    imageHost = 'localhost';
-
-
 // populate <section class="config-container"></section> with configWrapperHtml
 let populateConfigContainer = function() {
     log('config.populateConfigContainer()');
@@ -99,8 +90,8 @@ let saveConfig = function() {
 };
 
 // show or hide config panel
-let toggleConfigPanel = function() {
-    log('config.toggleConfigPanel()');
+let bindAction2ConfigPanel = function() {
+    log('config.bindAction2ConfigPanel()');
     let configSelected;
 
     $('.config-cog').click(function(event) {
@@ -147,8 +138,8 @@ let toggleConfigPanel = function() {
 };
 
 // select ordersPerPage and createDaySortSort
-let selectConfigOptions = function() {
-    log('config.selectConfigOptions()');
+let bindAction2ConfigOptions = function() {
+    log('config.bindAction2ConfigOptions()');
     let createDaySortSpans = $('.createDaySort-options>span');
     createDaySortSpans.click(function(event) {
         // donno why the event.target is <i>
@@ -169,8 +160,3 @@ let selectConfigOptions = function() {
         }
     });
 };
-
-// starting point
-populateConfigContainer();
-toggleConfigPanel();
-selectConfigOptions();

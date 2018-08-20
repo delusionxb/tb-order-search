@@ -44,7 +44,7 @@ let populateLoginContainer = function() {
 };
 
 let sendLoginAjax = function(username, password) {
-    log('login-logout:sendLoginAjax()');
+    log('login-logout.sendLoginAjax()');
     $.ajax({
         url: '/login',
         method: 'POST',
@@ -53,21 +53,24 @@ let sendLoginAjax = function(username, password) {
             password: password.val(),
         }),
         contentType: 'application/json; charset=UTF-8',
-        success: function(response) {
+        success: function(response, status, jqXHR) {
             if (response === null) {
-                log('login failed');
+                log('=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+ LOGIN FAILED');
             } else {
-                log('login succeeded');
-                // log(response);
-                sessionStorage.setItem('loginUser', JSON.stringify(response));
-                displayContainers();
+                log('=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+ LOGIN SUCCEEDED');
+                // log(`sendLoginAjax: ${$('.login-container').attr('class')}`);
+                toggleContainers('afterLogin');
+                makePagination();
             }
         },
+        error: printAjaxError,
     });
 };
 
-let bindLogin = function() {
-    log('login-logout.bindLogin()');
+let bindAction2Login = function() {
+    log('login-logout.bindAction2Login()');
+    let username = $('.field.username input');
+    let password = $('.field.password input');
     $('.field-login-button>.button').click(function(event) {
         sendLoginAjax(username, password);
     });
@@ -81,8 +84,9 @@ let bindLogin = function() {
     });
 };
 
-let bindLogout = function() {
-    log('login-logout.bindLogout()');
+// https://stackoverflow.com/questions/3338642/updating-address-bar-with-new-url-without-hash-or-reloading-the-page
+let bindAction2Logout = function() {
+    log('login-logout.bindAction2Logout()');
     $('.logout-container').click(function(event) {
         $.ajax({
             url: '/logout',
@@ -90,48 +94,13 @@ let bindLogout = function() {
             data: '{}',
             contentType: 'application/json; charset=UTF-8',
             success: function(response) {
-                log('logout succeeded');
-                sessionStorage.removeItem('loginUser');
-                displayContainers();
-            }
+                log('=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+ LOGOUT SUCCEEDED');
+                window.history.pushState(null, '', '/login');
+                toggleContainers('afterLogout');
+            },
+            error: function(jqXHR, status, error) {
+                log(`jqXHR: ${jqXHR}, status: ${status}, error: ${error}`);
+            },
         });
     });
 };
-
-let displayContainers = function() {
-    let loginUser = sessionStorage.getItem('loginUser');
-    log(`login-logout.displayContainers() -> current logged in user: ${JSON.stringify(loginUser)}`);
-    if (loginUser === null) {
-        $('.login-container').removeClass('is-off');
-        $('.logout-container').addClass('is-off');
-        $('.super-main-container').addClass('is-off');
-
-        // $('.login-container').toggleClass('is-off');
-        // $('.logout-container').toggleClass('is-off');
-        // $('.super-main-container').toggleClass('is-off');
-
-        username.val('');
-        password.val('');
-
-        $('.main-orders-list').remove();
-        $('.pagination-wrapper').remove();
-    } else {
-        $('.login-container').addClass('is-off');
-        $('.logout-container').removeClass('is-off');
-        $('.super-main-container').removeClass('is-off');
-
-        // $('.login-container').toggleClass('is-off');
-        // $('.logout-container').toggleClass('is-off');
-        // $('.super-main-container').toggleClass('is-off');
-
-        populatePaginationContainer();
-        makePagination();
-    }
-};
-
-populateLoginContainer();
-let username = $('.field.username input');
-let password = $('.field.password input');
-displayContainers();
-bindLogin();
-bindLogout();

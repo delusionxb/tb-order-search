@@ -29,7 +29,7 @@ class Login(Resource):
       return None
 
     login_user(Auth(auth))  # login_user() requires an object
-    print('the logged in user is {}'.format(current_user))
+    print('the logged in user is [{}]'.format(current_user))
     return auth
 
 

@@ -9,8 +9,8 @@ from app import api
 
 main_app = create_app('dev')
 
-@main_app.route('/', methods=['GET'])
-@main_app.route('/index', methods=['GET'])
+@main_app.route('/login', methods=['GET'])
+@main_app.route('/byPage', methods=['GET'])
 def index():
   return render_template('index.html')
 

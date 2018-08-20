@@ -108,8 +108,8 @@ let scroll2Top = function() {
     }, 200);
 };
 
-let bindAction2BackAndForth = function(getMainOrdersFunc=getMainOrdersByPage, funcArgs='') {
-    log(`pagination.bindAction2BackAndForth(getMainOrdersFunc=${getMainOrdersFunc.name}, funcArgs=${funcArgs})`);
+let bindEvent2BackAndForth = function(getMainOrdersFunc=getMainOrdersByPage, funcArgs='') {
+    log(`pagination.bindEvent2BackAndForth(getMainOrdersFunc=${getMainOrdersFunc.name}, funcArgs=${funcArgs})`);
     let pageList = $('.pagination-list');
     pageList.off('click');
     pageList.click(function(event) { // click pagination-link
@@ -163,7 +163,7 @@ let makePagination = function() {
                 paginationRightBorder = pageCount - pageGroupCount + 1;
 
                 makePageList(); // called when page loaded the 1st time, currentPageNo is 1
-                bindAction2BackAndForth();
+                bindEvent2BackAndForth();
             }
         },
         error: printAjaxError,
@@ -188,7 +188,7 @@ let makePagination4Search = function(searchData) {
             paginationRightBorder = pageCount - pageGroupCount + 1;
 
             makePageList(1, getMainOrdersByConditions, {'searchData': searchData});
-            bindAction2BackAndForth(getMainOrdersByConditions, {'searchData': searchData});
+            bindEvent2BackAndForth(getMainOrdersByConditions, {'searchData': searchData});
         },
         error: printAjaxError,
     });

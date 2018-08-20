@@ -67,8 +67,8 @@ let sendLoginAjax = function(username, password) {
     });
 };
 
-let bindAction2Login = function() {
-    log('login-logout.bindAction2Login()');
+let bindEvent2Login = function() {
+    log('login-logout.bindEvent2Login()');
     let username = $('.field.username input');
     let password = $('.field.password input');
     $('.field-login-button>.button').click(function(event) {
@@ -85,8 +85,8 @@ let bindAction2Login = function() {
 };
 
 // https://stackoverflow.com/questions/3338642/updating-address-bar-with-new-url-without-hash-or-reloading-the-page
-let bindAction2Logout = function() {
-    log('login-logout.bindAction2Logout()');
+let bindEvent2Logout = function() {
+    log('login-logout.bindEvent2Logout()');
     $('.logout-container').click(function(event) {
         $.ajax({
             url: '/logout',
@@ -98,9 +98,7 @@ let bindAction2Logout = function() {
                 window.history.pushState(null, '', '/login');
                 toggleContainers('afterLogout');
             },
-            error: function(jqXHR, status, error) {
-                log(`jqXHR: ${jqXHR}, status: ${status}, error: ${error}`);
-            },
+            error: printAjaxError,
         });
     });
 };

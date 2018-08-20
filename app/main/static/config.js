@@ -90,8 +90,8 @@ let saveConfig = function() {
 };
 
 // show or hide config panel
-let bindAction2ConfigPanel = function() {
-    log('config.bindAction2ConfigPanel()');
+let bindEvent2ConfigPanel = function() {
+    log('config.bindEvent2ConfigPanel()');
     let configSelected;
 
     $('.config-cog').click(function(event) {
@@ -138,8 +138,8 @@ let bindAction2ConfigPanel = function() {
 };
 
 // select ordersPerPage and createDaySortSort
-let bindAction2ConfigOptions = function() {
-    log('config.bindAction2ConfigOptions()');
+let bindEvent2ConfigOptions = function() {
+    log('config.bindEvent2ConfigOptions()');
     let createDaySortSpans = $('.createDaySort-options>span');
     createDaySortSpans.click(function(event) {
         // donno why the event.target is <i>

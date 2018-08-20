@@ -19,8 +19,8 @@ let populateTopBottomContainer = function() {
     $('.top-bottom-container').append($(topBottomWrapperHtml));
 };
 
-let bindAction2TopBottom = function() {
-    log('top-bottom.bindAction2TopBottom()');
+let bindEvent2TopBottom = function() {
+    log('top-bottom.bindEvent2TopBottom()');
     $('.top-bottom.to-top').click(function(event) {
         window.scrollTo(0, 0);
     });

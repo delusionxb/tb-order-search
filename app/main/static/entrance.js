@@ -8,8 +8,8 @@ let
     imageHost = 'localhost';
 
 populateLoginContainer();
-bindAction2Login();
-bindAction2Logout();
+bindEvent2Login();
+bindEvent2Logout();
 makePagination();
 
 let populateContainers = function() {
@@ -20,12 +20,12 @@ let populateContainers = function() {
 };
 
 let bindOnce = function() {
-    bindAction2TopBottom();
-    bindAction2ConfigPanel();
-    bindAction2ConfigOptions();
-    bindAction2SearchExtension();
-    bindAction2SearchFormBtns();
-    bindAction2DateRangeType();
+    bindEvent2TopBottom();
+    bindEvent2ConfigPanel();
+    bindEvent2ConfigOptions();
+    bindEvent2SearchExtension();
+    bindEvent2SearchFormBtns();
+    bindEvent2DateRangeType();
 };
 
 let toggleContainers = function(action) {

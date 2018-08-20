@@ -258,12 +258,15 @@ def test():
       tradeStatus = 'closed',
     )
 
+    conditions6 = {'itemName': '电影少女', 'minCreateDay': '2018-03-01', 'maxCreateDay': '2018-08-20', 'pageNo': 1, 'ordersPerPage': 20, 'createDaySort': -1}
+
     conditions_list = [
       # conditions1,
       # conditions2,
       # conditions3,
-      conditions4,
-      conditions5,
+      # conditions4,
+      # conditions5,
+      conditions6,
     ]
 
     for conditions in conditions_list:
@@ -272,8 +275,8 @@ def test():
         print(result)
 
   # test_get_mainOrders_by_page()
-  test_populate_search_conditions()
-  # test_get_totalCount_by_conditions()
+  # test_populate_search_conditions()
+  test_get_totalCount_by_conditions()
 
 
 if __name__ == '__main__':

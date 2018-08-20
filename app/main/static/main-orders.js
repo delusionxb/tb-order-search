@@ -252,8 +252,8 @@ let makeSubOrders = function(subOrdersData, createDay, mainOrderId, payInfo, ord
     return subOrders;
 };
 
-let bindAction2ImgModel = function() {
-    log('main-orders.bindAction2ImgModel()');
+let bindEvent2ImgModel = function() {
+    log('main-orders.bindEvent2ImgModel()');
     let imgContents = $('.img-content');
     let imgModalBackgrounds = $('.img-modal-background');
     let subOrders = imgContents.closest('.sub-order');
@@ -270,8 +270,8 @@ let bindAction2ImgModel = function() {
     });
 };
 
-let bindAction2HiddenSubOrders = function() {
-    log('main-orders.bindAction2HiddenSubOrders()');
+let bindEvent2HiddenSubOrders = function() {
+    log('main-orders.bindEvent2HiddenSubOrders()');
     let orderTopicHiddens = $('.order-topic-hidden');
     let mainOrders = orderTopicHiddens.closest('.main-order');
     $.each(orderTopicHiddens, function(index, orderTopicHidden) {
@@ -300,8 +300,9 @@ let getMainOrdersByPage = function(pageNo) {
             let mainOrdersList = makeMainOrdersList(responseObj.mainOrders);
             $('.main-orders-list').remove();
             mainOrderContainer.append(mainOrdersList);
-            bindAction2ImgModel();
+            bindEvent2ImgModel();
         },
+        error: printAjaxError,
     });
 };
 
@@ -320,6 +321,7 @@ let getMainOrdersByConditions = function(pageNo, searchData) {
                     itemName_t: response,
                 });
             },
+            error: printAjaxError,
         });
     } else {
         sendByConditionAjax(searchData);
@@ -338,8 +340,9 @@ let sendByConditionAjax = function(searchData, funcArgs={}) {
             let mainOrdersList = makeMainOrdersList(responseObj.mainOrders, funcArgs);
             $('.main-orders-list').remove();
             mainOrderContainer.append(mainOrdersList);
-            bindAction2ImgModel();
-            bindAction2HiddenSubOrders();
+            bindEvent2ImgModel();
+            bindEvent2HiddenSubOrders();
         },
+        error: printAjaxError,
     });
 };

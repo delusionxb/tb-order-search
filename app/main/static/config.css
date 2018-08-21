@@ -12,9 +12,10 @@
 
 .config-options-container {
     position: fixed;
+    z-index: 100;
     top: 0;
-    left: -12rem;
-    width: 12rem;
+    left: -15rem;
+    width: 15rem;
     height: 100vh;
     background-color: lightskyblue;
 }
@@ -47,7 +48,7 @@
     padding: 0.5rem;
     font-family: monospace;
     font-weight: 900;
-    font-size: 1.2rem;
+    /*font-size: 1.2rem;*/
     margin-top: 0.5rem;
 }
 
@@ -61,9 +62,11 @@ div.config-options-name {
     margin-top: 0.5rem;
 }
 
-.createDaySort-options>span {
+.createDaySort-options>span, .autoHideSubOrders-options>span {
     display: inline-block;
     cursor: pointer;
+    padding: 0.1rem 0.2rem;
+    border-radius: 0.2rem;
 }
 
 .ordersPerPage-options>span {
@@ -71,6 +74,8 @@ div.config-options-name {
     font-weight: 900;
     font-size: 1.8rem;
     cursor: pointer;
+    padding: 0.1rem 0.2rem;
+    border-radius: 0.2rem;
 }
 
 .config-options-confirm {

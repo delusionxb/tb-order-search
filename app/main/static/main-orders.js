@@ -226,10 +226,10 @@ let makeSubOrders = function(subOrdersData, createDay, mainOrderId, payInfo, ord
         let quantity = subOrderData.quantity;
         let subOrderImg = makeSubOrderImg(mainOrderId, subOrderId, itemId, createDay, itemInfo.pic, unitPrice);
 
-        // subOrderId will auto-changed to suborderid
+        // subOrderId will be auto-changed to suborderid
         // https://www.designcise.com/web/tutorial/how-to-check-if-a-string-contains-another-substring-in-javascript
         let subOrder = $(`<div class="sub-order" data-suborderid="${subOrderId}"></div>`);
-        if (isNaN(funcArgs.itemName)) { // if not order ID
+        if (isNaN(funcArgs.itemName)) { // if not mainOrder ID
             if (funcArgs.itemName !== undefined) {
                 if (itemTitle.search(new RegExp(funcArgs.itemName, 'i')) === -1) {
                     subOrder = $(`<div class="sub-order is-off" data-suborderid="${subOrderId}"></div>`);
@@ -282,6 +282,12 @@ let bindEvent2HiddenSubOrders = function() {
             orderTopicHiddenJq.find('.order-topic-hidden-ext').toggleClass('is-off');
             orderTopicHiddenJq.find('.order-topic-icon').toggleClass('is-off');
         });
+
+        if (!JSON.parse(sessionStorage.getItem('config')).autoHideSubOrders) {
+            subOrdersOff.toggleClass('is-off');
+            orderTopicHiddenJq.find('.order-topic-hidden-ext').toggleClass('is-off');
+            orderTopicHiddenJq.find('.order-topic-icon').toggleClass('is-off');
+        }
     });
 };
 

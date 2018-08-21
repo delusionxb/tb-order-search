@@ -25,7 +25,7 @@ let populateConfigContainer = function() {
                         <hr />
                         <div class="config-options-createDaySort">
                             <div class="createDaySort-title">
-                                <span>订单日期:</span>
+                                <span>订单日期排序:</span>
                             </div>
                             <div class="createDaySort-options">
                                 <span class="createDaySort-down">
@@ -38,12 +38,25 @@ let populateConfigContainer = function() {
                         </div>
                         <div class="config-options-ordersPerPage">
                             <div class="ordersPerPage-title">
-                                <span>每页显示:</span>
+                                <span>每页显示订单:</span>
                             </div>
                             <div class="ordersPerPage-options">
                                 <span class="ordersPerPage-10">10</span>
                                 <span class="ordersPerPage-15">15</span>
                                 <span class="ordersPerPage-20">20</span>
+                            </div>
+                        </div>
+                        <div class="config-options-autoHideSubOrders">
+                            <div class="autoHideSubOrders-title">
+                                <span>自动隐藏不匹配的子订单:</span>
+                            </div>
+                            <div class="autoHideSubOrders-options">
+                                <span class="autoHideSubOrders-yes">
+                                    <i class="fas fa-check fa-2x"></i>
+                                </span>
+                                <span class="autoHideSubOrders-no">
+                                    <i class="fas fa-times fa-2x"></i>
+                                </span>
                             </div>
                         </div>
                     </div>
@@ -63,10 +76,12 @@ let setConfig = function() {
     log('config.setConfig()');
     $('.createDaySort-options>span').removeClass('is-selected');
     $('.ordersPerPage-options>span').removeClass('is-selected');
+    $('.autoHideSubOrders-options>span').removeClass('is-selected');
 
     let configData = JSON.parse(sessionStorage.getItem('config'));
     $(`.createDaySort-options>span.${configData.createDaySort === -1 ? 'createDaySort-down' : 'createDaySort-up'}`).addClass('is-selected');
     $(`.ordersPerPage-options>span.ordersPerPage-${configData.ordersPerPage}`).addClass('is-selected');
+    $(`.autoHideSubOrders-options>span.${configData.autoHideSubOrders ? 'autoHideSubOrders-yes' : 'autoHideSubOrders-no'}`).addClass('is-selected');
 };
 
 let saveConfig = function() {
@@ -75,9 +90,11 @@ let saveConfig = function() {
     createDaySort = $('.createDaySort-options>span.is-selected').attr('class').split(' ')[0] === 'createDaySort-down' ? -1 : 1;
     // 'ordersPerPage-10 is-selected' -->split(' ')[0]--> 'ordersPerPage-10' -->split('-')[1])--> '10'
     ordersPerPage = parseInt($('.ordersPerPage-options>span.is-selected').attr('class').split(' ')[0].split('-')[1]);
+    autoHideSubOrders = $('.autoHideSubOrders-options>span.is-selected').attr('class').split(' ')[0] === 'autoHideSubOrders-yes';
     sessionStorage.setItem('config', JSON.stringify({
         createDaySort: createDaySort,
         ordersPerPage: ordersPerPage,
+        autoHideSubOrders: autoHideSubOrders,
     }));
 };
 
@@ -88,14 +105,14 @@ let bindEvent2ConfigPanel = function() {
         log('opening config panel');
         setConfig();
         $('.config-options-container').animate({
-            left: '+=12rem',
+            left: '+=15rem',
         });
     });
 
     $('.config-close-icon, .button.is-info.cancel').click(function(event) {
         log('closing config panel');
         $('.config-options-container').animate({
-            left: '-=12rem',
+            left: '-=15rem',
         }, {
             // complete: function() {
             //     setConfig();
@@ -106,7 +123,7 @@ let bindEvent2ConfigPanel = function() {
     $('.button.is-info.ok').click(function(event) {
         log('saving createDaySort and ordersPerPage');
         $('.config-options-container').animate({
-            left: '-=12rem',
+            left: '-=15rem',
         }, {
             complete: function() {
                 log('calling toggleConfig');
@@ -124,7 +141,7 @@ let bindEvent2ConfigPanel = function() {
     });
 };
 
-// select ordersPerPage and createDaySortSort
+// select ordersPerPage and createDaySortSort and autoHideSubOrders
 let bindEvent2ConfigOptions = function() {
     log('config.bindEvent2ConfigOptions()');
     let createDaySortSpans = $('.createDaySort-options>span');
@@ -143,6 +160,15 @@ let bindEvent2ConfigOptions = function() {
         if (!event.target.classList.contains('is-selected')) {
             $('.ordersPerPage-options>.is-selected').toggleClass('is-selected');
             $(event.target).toggleClass('is-selected');
+        }
+    });
+
+    let autoHideSubOrdersSpans = $('.autoHideSubOrders-options>span');
+    autoHideSubOrdersSpans.click(function(event) {
+        // donno why the event.target is <i>
+        let autoHideSubOrdersSpan = event.target.parentNode;
+        if (autoHideSubOrdersSpan.tagName === 'SPAN' && !autoHideSubOrdersSpan.classList.contains('is-selected')) {
+            autoHideSubOrdersSpans.toggleClass('is-selected');
         }
     });
 };

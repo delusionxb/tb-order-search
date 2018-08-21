@@ -2,7 +2,7 @@
 
 from flask import request
 from flask_restplus import Resource, Namespace, fields
-from flask_login import login_required
+from flask_login import login_required, current_user
 from app.main.model.order import Order
 from app.main.toolbox import get_404_images
 
@@ -22,6 +22,7 @@ class GetTotalCountByConditions(Resource):
   )))
   def post(self):
     print('GetTotalCountByConditions() -> payload from request: {}'.format(request.json))
+    print('the current logged in user is [{}]'.format(current_user))
     return Order.get_totalCount_by_conditions(request.json)
 
 
@@ -44,6 +45,7 @@ class GetOrdersByConditions(Resource):
   def post(self):
     print('GetOrdersByConditions() -> payload from request: {}'.format(request.json))
     mainOrders = Order.get_mainOrders_by_conditions(request.json)
+    print('the current logged in user is [{}]'.format(current_user))
     return '{{"mainOrders": {}, "404_images": {}}}'.format(mainOrders, get_404_images())
 
 
@@ -52,6 +54,7 @@ class GetTotalCount(Resource):
   @login_required
   def get(self):
     print('GetTotalCount()')
+    print('the current logged in user is [{}]'.format(current_user))
     return Order.totalCount
 
 
@@ -80,6 +83,7 @@ class GetOrdersByPage(Resource):
   @order_ns.expect(parser)
   def get(self):
     print('GetOrdersByPage() -> args from request: {}'.format(request.args))
+    print('the current logged in user is [{}]'.format(current_user))
     json_data = request.args
     mainOrders = Order.get_mainOrders_by_page(
       pageNo=int(json_data.get('pageNo')),

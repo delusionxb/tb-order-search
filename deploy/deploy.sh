@@ -59,7 +59,7 @@ elif [[ "$action" == 'gstart' ]]; then
   cd $projectPath && /usr/local/bin/gunicorn main_app:main_app -c ./deploy/gunicorn.conf
 
   echo "check gunicorn"
-  if [[ "`unbuffer curl -sI http://${host}:7770 | head -1 | awk '{print $2}'`" -eq 200 ]]; then
+  if [[ "`unbuffer curl -sI http://${host}:7770/login | head -1 | awk '{print $2}'`" -eq 200 ]]; then
     echo "gunicorn is ready"
   else
     echo "something wrong with gunicorn config, probably application module or port conflict"

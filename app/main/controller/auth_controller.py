@@ -8,6 +8,7 @@ from flask_restplus import Resource, Namespace, fields
 from flask_login import login_user, logout_user, login_required, current_user
 from app.main.model.user import User
 from app.main.model.auth import Auth
+from datetime import timedelta
 
 
 auth_ns = Namespace('auth', description='authentication api')
@@ -22,17 +23,26 @@ class Login(Resource):
   @auth_ns.expect(auth_ns.model('auth_login', dict(
     username = fields.String,
     password = fields.String,
+    rememberMe = fields.Boolean,
   )))
   def post(self):
-    auth = Auth.validate(request.json)
-    if auth is None:
+    auth_document = Auth.validate(request.json)
+    if auth_document is None:
       print('=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+ LOGIN FAILED')
       return None
 
-    login_user(Auth(auth))  # login_user() requires an object
+    # https://flask-login.readthedocs.io/en/latest/#remember-me
+    # https://docs.python.org/3/library/datetime.html#datetime.timedelta
     print('=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+ LOGIN SUCCEEDED')
-    print('the logged in user is [{}]'.format(current_user))
-    return auth
+    rememberMe = request.json.get('rememberMe')
+    if rememberMe:
+      print('remember ME')  # remember ME does not work, donno why yet...
+      login_user(Auth(auth_document), remember=True, duration=timedelta(weeks=1))  # login_user() requires an object
+    else:
+      print('don\'t remember ME')
+      login_user(Auth(auth_document))
+    print('the current logged in user is [{}]'.format(current_user))
+    return auth_document
 
 
 @auth_ns.route('logout')

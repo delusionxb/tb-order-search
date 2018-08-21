@@ -37,6 +37,9 @@ let populateLoginContainer = function() {
                     </div>
                 </div>
             </div>
+            <div class="login-failed is-off">
+                <span>Login Failed, incorrect Username or Password.</span>
+            </div>
         </div>
     `;
 
@@ -51,6 +54,7 @@ let sendLoginAjax = function(username, password) {
         data: JSON.stringify({
             username: username.val(),
             password: password.val(),
+            rememberMe: $('.field-login-rememberMe>input[type="checkbox"]').prop('checked'),
         }),
         contentType: 'application/json; charset=UTF-8',
         beforeSend: function(jqXHR, settings) {
@@ -59,11 +63,13 @@ let sendLoginAjax = function(username, password) {
         success: function(response, status, jqXHR) {
             if (response === null) {
                 log('=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+ LOGIN FAILED');
+                $('.login-failed').removeClass('is-off');
             } else {
                 log('=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+ LOGIN SUCCEEDED');
                 // log(`sendLoginAjax: ${$('.login-container').attr('class')}`);
                 toggleContainers('afterLogin');
                 makePagination();
+                $('.login-failed').addClass('is-off');
             }
         },
         error: printAjaxError,
@@ -105,6 +111,7 @@ let bindEvent2Logout = function() {
                 toggleContainers('afterLogout');
                 sessionStorage.removeItem('config');
                 sessionStorage.removeItem('searchData');
+                $('.login-failed').addClass('is-off');
             },
             error: printAjaxError,
         });

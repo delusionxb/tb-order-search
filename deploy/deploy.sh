@@ -45,9 +45,14 @@ if [[ "$action" == 'nginx' ]]; then
   fi
 
 elif [[ "$action" == 'config' ]]; then
-  echo "prepare config.js and gunicorn.conf"
-  sed -i "s#\ \ \ \ imageHost = 'localhost'#\ \ \ \ imageHost = '${host}'#g" ${projectPath}/app/main/static/config.js
+  echo "prepare entrance.js and gunicorn.conf"
+  sed -i "s#\ \ \ \ imageHost = 'localhost'#\ \ \ \ imageHost = '${host}'#g" ${projectPath}/app/main/static/entrance.js
   sed -i "s#bind = 'localhost:7770'#bind = '${host}:7770'#g" ${projectPath}/deploy/gunicorn.conf
+
+elif [[ "$action" == 'gc' ]]; then
+  echo "git checkout -- entrance.js and gunicorn.conf"
+  sed -i "s#\ \ \ \ imageHost = '${host}'#\ \ \ \ imageHost = 'localhost'#g" ${projectPath}/app/main/static/entrance.js
+  sed -i "s#bind = '${host}:7770'#bind = 'localhost:7770'#g" ${projectPath}/deploy/gunicorn.conf
 
 elif [[ "$action" == 'gstart' ]]; then
   echo "start gunicorn"
@@ -69,4 +74,6 @@ elif [[ "$action" == 'gstop' ]]; then
     echo "remove gunicorn.pid"
     rm -f ${projectPath}/gunicorn.pid
   fi
+else
+  echo "unknown action [$action], plz choose among [nginx | config | gc | gstart | gstop]"
 fi

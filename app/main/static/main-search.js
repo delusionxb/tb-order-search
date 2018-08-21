@@ -154,7 +154,8 @@ let getSearchData = function() {
             }
         }
     }
-    log('searchData: ', JSON.stringify(searchData));
+    log(`searchData: ${JSON.stringify(searchData)}`);
+    sessionStorage.setItem('searchData', JSON.stringify(searchData));
     return searchData;
 };
 
@@ -177,6 +178,7 @@ let resetSearchData = function() {
         $('.createDay-type-byRange').toggle();
     }
     $('select[class="createDay-type-byMonth"]>option:nth-child(1)').prop('selected', 'selected');
+    sessionStorage.removeItem('searchData');
 };
 
 let bindEvent2SearchFormBtns = function() {

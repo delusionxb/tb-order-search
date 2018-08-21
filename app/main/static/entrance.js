@@ -1,7 +1,7 @@
 
 let
-    ordersPerPage = 10,
     createDaySort = -1,
+    ordersPerPage = 10,
     pageCount = 0,
     pageGroupCount = 5,
     paginationRightBorder = 0,
@@ -10,7 +10,19 @@ let
 populateLoginContainer();
 bindEvent2Login();
 bindEvent2Logout();
-makePagination();
+sessionStorage.setItem('config', JSON.stringify({
+    createDaySort: createDaySort,
+    ordersPerPage: ordersPerPage,
+}));
+
+// maybe add ifAutoHide_UnmatchedSubOrders
+// https://stackoverflow.com/questions/679915/how-do-i-test-for-an-empty-javascript-object
+let searchData = sessionStorage.getItem('searchData');
+if (searchData === null || (Object.keys(searchData).length === 0 && searchData.constructor === Object)) {
+    makePagination();
+} else {
+    makePagination4Search(JSON.parse(searchData));
+}
 
 let populateContainers = function() {
     populateTopBottomContainer();

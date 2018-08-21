@@ -335,6 +335,10 @@ let sendByConditionAjax = function(searchData, funcArgs={}) {
         data: JSON.stringify(searchData),
         contentType: 'application/json; charset=UTF-8',
         success: function(response) {
+            if (mainOrderContainer === undefined) {
+                mainOrderContainer = $('.main-orders-container');
+            }
+
             let responseObj = JSON.parse(response);
             four04Images = responseObj['404_images'];
             let mainOrdersList = makeMainOrdersList(responseObj.mainOrders, funcArgs);

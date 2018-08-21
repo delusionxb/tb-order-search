@@ -26,9 +26,11 @@ class Login(Resource):
   def post(self):
     auth = Auth.validate(request.json)
     if auth is None:
+      print('=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+ LOGIN FAILED')
       return None
 
     login_user(Auth(auth))  # login_user() requires an object
+    print('=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+ LOGIN SUCCEEDED')
     print('the logged in user is [{}]'.format(current_user))
     return auth
 
@@ -38,6 +40,7 @@ class Logout(Resource):
   @login_required
   def post(self):
     logout_user()
+    print('=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+ LOGOUT SUCCEEDED')
     return dict(
       logout = 'success'
     )

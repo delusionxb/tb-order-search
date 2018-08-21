@@ -53,6 +53,9 @@ let sendLoginAjax = function(username, password) {
             password: password.val(),
         }),
         contentType: 'application/json; charset=UTF-8',
+        beforeSend: function(jqXHR, settings) {
+            jqXHR.url = settings.url;
+        },
         success: function(response, status, jqXHR) {
             if (response === null) {
                 log('=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+ LOGIN FAILED');
@@ -93,10 +96,15 @@ let bindEvent2Logout = function() {
             method: 'POST',
             data: '{}',
             contentType: 'application/json; charset=UTF-8',
+            beforeSend: function(jqXHR, settings) {
+                jqXHR.url = settings.url;
+            },
             success: function(response) {
                 log('=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+ LOGOUT SUCCEEDED');
                 window.history.pushState(null, '', '/login');
                 toggleContainers('afterLogout');
+                sessionStorage.removeItem('config');
+                sessionStorage.removeItem('searchData');
             },
             error: printAjaxError,
         });

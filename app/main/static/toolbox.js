@@ -39,4 +39,10 @@ let printAjaxError = function(jqXHR, status, error) {
             log(`${key}: ${JSON.stringify(value)}`);
         }
     });
+
+    if (jqXHR.url === '/login' || jqXHR.url === '/logout') {
+        log('clean session data when AJAX /login or /logout FAILED');
+        sessionStorage.removeItem('config');
+        sessionStorage.removeItem('searchData');
+    }
 };

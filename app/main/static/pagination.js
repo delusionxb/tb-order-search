@@ -183,6 +183,8 @@ let makePagination4Search = function(searchData) {
             if (window.location.pathname !== '/byConditions') {
                 window.history.pushState(null, '', '/byConditions');
             }
+            toggleContainers('afterLogin');
+
             $('.return-count>span').text(response);
             pageCount = Math.ceil(response / ordersPerPage);
             paginationRightBorder = pageCount - pageGroupCount + 1;

@@ -28,7 +28,7 @@ let populateConfigContainer = function() {
                                 <span>订单日期:</span>
                             </div>
                             <div class="createDaySort-options">
-                                <span class="createDaySort-down is-selected">
+                                <span class="createDaySort-down">
                                     <i class="fas fa-sort-amount-down fa-2x"></i>
                                 </span>
                                 <span class="createDaySort-up">
@@ -41,7 +41,7 @@ let populateConfigContainer = function() {
                                 <span>每页显示:</span>
                             </div>
                             <div class="ordersPerPage-options">
-                                <span class="ordersPerPage-10 is-selected">10</span>
+                                <span class="ordersPerPage-10">10</span>
                                 <span class="ordersPerPage-15">15</span>
                                 <span class="ordersPerPage-20">20</span>
                             </div>
@@ -59,44 +59,34 @@ let populateConfigContainer = function() {
     $('.config-container').append($(configWrapperHtml));
 };
 
-let storeConfig = function() {
-    log('config.storeConfig()');
-    return {
-        createDaySortSelected: $('.createDaySort-options>span.is-selected').get(0).classList[0],
-        ordersPerPageSelected: $('.ordersPerPage-options>span.is-selected').get(0).classList[0],
-    };
-};
+let setConfig = function() {
+    log('config.setConfig()');
+    $('.createDaySort-options>span').removeClass('is-selected');
+    $('.ordersPerPage-options>span').removeClass('is-selected');
 
-let restoreConfig = function(configSelected) {
-    log(`config.storeConfig() [${JSON.stringify(configSelected)}]`);
-    $('.createDaySort-options>span.is-selected').toggleClass('is-selected');
-    $(`.createDaySort-options>span.${configSelected.createDaySortSelected}`).toggleClass('is-selected');
-    $('.ordersPerPage-options>span.is-selected').toggleClass('is-selected');
-    $(`.ordersPerPage-options>span.${configSelected.ordersPerPageSelected}`).toggleClass('is-selected');
+    let configData = JSON.parse(sessionStorage.getItem('config'));
+    $(`.createDaySort-options>span.${configData.createDaySort === -1 ? 'createDaySort-down' : 'createDaySort-up'}`).addClass('is-selected');
+    $(`.ordersPerPage-options>span.ordersPerPage-${configData.ordersPerPage}`).addClass('is-selected');
 };
 
 let saveConfig = function() {
     log('config.saveConfig()');
-    let createDaySortSpan = $('.createDaySort-options>span.is-selected').get(0);
-    let createDaySort = createDaySortSpan.classList.contains('createDaySort-down') ? -1 : 1; // desc or asc
-    let ordersPerPageSpan = $('.ordersPerPage-options>span.is-selected').get(0);
-    let ordersPerPage = ordersPerPageSpan.classList.contains('ordersPerPage-10') ? 10 : (
-        ordersPerPageSpan.classList.contains('ordersPerPage-15') ? 15 : 20
-    );
-    return {
+    // desc or asc
+    createDaySort = $('.createDaySort-options>span.is-selected').attr('class').split(' ')[0] === 'createDaySort-down' ? -1 : 1;
+    // 'ordersPerPage-10 is-selected' -->split(' ')[0]--> 'ordersPerPage-10' -->split('-')[1])--> '10'
+    ordersPerPage = parseInt($('.ordersPerPage-options>span.is-selected').attr('class').split(' ')[0].split('-')[1]);
+    sessionStorage.setItem('config', JSON.stringify({
         createDaySort: createDaySort,
         ordersPerPage: ordersPerPage,
-    };
+    }));
 };
 
 // show or hide config panel
 let bindEvent2ConfigPanel = function() {
     log('config.bindEvent2ConfigPanel()');
-    let configSelected;
-
     $('.config-cog').click(function(event) {
         log('opening config panel');
-        configSelected = storeConfig();
+        setConfig();
         $('.config-options-container').animate({
             left: '+=12rem',
         });
@@ -107,10 +97,9 @@ let bindEvent2ConfigPanel = function() {
         $('.config-options-container').animate({
             left: '-=12rem',
         }, {
-            complete: function() {
-                // log(configSelected);
-                restoreConfig(configSelected);
-            },
+            // complete: function() {
+            //     setConfig();
+            // },
         });
     });
 
@@ -121,9 +110,7 @@ let bindEvent2ConfigPanel = function() {
         }, {
             complete: function() {
                 log('calling toggleConfig');
-                let configs = saveConfig();
-                ordersPerPage = configs.ordersPerPage;
-                createDaySort = configs.createDaySort;
+                saveConfig();
 
                 let searchData = getSearchData();
                 // https://stackoverflow.com/questions/679915/how-do-i-test-for-an-empty-javascript-object
@@ -145,8 +132,7 @@ let bindEvent2ConfigOptions = function() {
         // donno why the event.target is <i>
         let createDaySortSpan = event.target.parentNode;
         // console.log(createDaySortSpan);
-        if (createDaySortSpan.tagName === 'SPAN' &&
-            !createDaySortSpan.classList.contains('is-selected')) {
+        if (createDaySortSpan.tagName === 'SPAN' && !createDaySortSpan.classList.contains('is-selected')) {
             createDaySortSpans.toggleClass('is-selected');
         }
     });

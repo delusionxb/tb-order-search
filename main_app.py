@@ -11,6 +11,7 @@ main_app = create_app('dev')
 
 @main_app.route('/login', methods=['GET'])
 @main_app.route('/byPage', methods=['GET'])
+@main_app.route('/byConditions', methods=['GET'])
 def index():
   return render_template('index.html')
 

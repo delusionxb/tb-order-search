@@ -6,6 +6,10 @@
 #
 # https://stackoverflow.com/questions/11774887/how-to-stop-mongo-db-in-one-command
 # https://docs.mongodb.com/manual/tutorial/manage-mongodb-processes/
+#
+# if encounter:
+# ./bin/mongod: error while loading shared libraries: libcurl.so.4: cannot open shared object file: No such file or directory
+# apt update && apt install libcurl4-openssl-dev
 
 source ${HOME}/env-setup/env-helper/SimpleLogsHelper.sh
 

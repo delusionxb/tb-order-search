@@ -20,7 +20,7 @@ auth_model = auth_ns.model('auth_model', dict(
 
 @auth_ns.route('login')
 class Login(Resource):
-  @auth_ns.expect(auth_ns.model('auth_login', dict(
+  @auth_ns.expect(auth_ns.model('Login', dict(
     username = fields.String,
     password = fields.String,
     rememberMe = fields.Boolean,

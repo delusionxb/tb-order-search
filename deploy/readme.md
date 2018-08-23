@@ -26,6 +26,8 @@
   - unpack to /somewhere/mongodb-linux-x86_64-xyz
   - cp /somewhere/tb-order-search/deploy/mongod.* /somewhere/mongodb-linux-x86_64-xyz
   - start mongodb, run '/somewhere/mongodb-linux-x86_64-xyz/mongod.sh up'
+  - scp /Users/frank/python/spider/main-orders.tgz to target machine
+  - tar zxf /somewhere/item-images.tgz -C /somewhere/tb-order-search
   - import data, run '/somewhere/tb-order-search/deploy/mongo_handler.py'
   - try to connect to remote mongodb by client tool like Robo 3T
 

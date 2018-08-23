@@ -55,6 +55,29 @@ elif [[ "$action" == 'gc' ]]; then
   sed -i "s#bind = '${host}:7770'#bind = 'localhost:7770'#g" ${projectPath}/deploy/gunicorn.conf
 
 elif [[ "$action" == 'gstart' ]]; then
+  # https://stackoverflow.com/questions/15443106/how-to-check-if-mongodb-is-up-and-ready-to-accept-connections-from-bash-script
+  echo "check mongodb"
+  declare -i count=0
+  until nc -z localhost 27017; do
+    sleep 3
+    count=$((count+1))
+    if [[ "$count" -eq 20 ]]; then
+      echo "mongodb is not accessible after 1min wait, GSTART abort."
+      exit 11
+    fi
+  done
+
+  echo "check nginx:7776"
+  declare -i count=0
+  until nc -z localhost 7776; do
+    sleep 3
+    count=$((count+1))
+    if [[ "$count" -eq 20 ]]; then
+      echo "nginx:7776 is not accessible after 1min wait, GSTART abort."
+      exit 11
+    fi
+  done
+
   echo "start gunicorn"
   cd $projectPath && /usr/local/bin/gunicorn main_app:main_app -c ./deploy/gunicorn.conf
 

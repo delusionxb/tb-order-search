@@ -14,8 +14,8 @@ class GetTotalCountByConditions(Resource):
   @login_required
   @order_ns.expect(order_ns.model('GetTotalCountByConditions', dict(
     itemName=fields.String,
-    minTotalCost=fields.Integer(description='min total cost', request=False),
-    maxTotalCost=fields.Integer,
+    minTotalCost=fields.Integer(description='min total cost', required=False),
+    maxTotalCost=fields.Integer(description='max total cost', required=False),
     shopName=fields.String,
     minCreateDay=fields.String,
     maxCreateDay=fields.String,
@@ -31,8 +31,8 @@ class GetOrdersByConditions(Resource):
   @login_required
   @order_ns.expect(order_ns.model('GetOrdersByConditions', dict(
     itemName = fields.String,
-    minTotalCost = fields.Integer(description='min total cost', request=False),
-    maxTotalCost = fields.Integer(description='max total cost', request=False),
+    minTotalCost = fields.Integer(description='min total cost', required=False),
+    maxTotalCost = fields.Integer(description='max total cost', required=True),
     shopName = fields.String,
     minCreateDay = fields.String,
     maxCreateDay = fields.String,

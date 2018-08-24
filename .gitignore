@@ -7,3 +7,4 @@ deploy/item-images
 tb*.log
 gunicorn.pid
 app/main/templates/index-debug.html
+deploy/gunicorn.conf

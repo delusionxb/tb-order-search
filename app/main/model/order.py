@@ -29,7 +29,9 @@ from app.main.model import mdb
 
 class Order:
 
-  totalCount = mdb.subOrders.count()
+  @staticmethod
+  def get_totalCount():
+    return mdb.subOrders.count()
 
   @staticmethod
   def get_mainOrders_by_page(pageNo=1, ordersPerPage=10, createDaySort=-1, indent=None):

@@ -55,7 +55,7 @@ class GetTotalCount(Resource):
   def get(self):
     print('GetTotalCount()')
     print('the current logged in user is [{}]'.format(current_user))
-    return Order.totalCount
+    return Order.get_totalCount()
 
 
 @order_ns.route('byPage')
